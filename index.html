@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sinema — Streaming Film & Serial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --red: #E50914;
+      --dark: #141414;
+      --card-bg: #1c1c1c;
+      --text: #ffffff;
+      --muted: #b3b3b3;
+      --font-title: 'Bebas Neue', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--dark);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 48px;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(20,20,20,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .logo { font-family: var(--font-title); font-size: 2.2rem; color: var(--red); letter-spacing: 3px; cursor: pointer; }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a { color: var(--muted); font-size: 14px; text-decoration: none; transition: color .2s; }
+    .nav-links a:hover, .nav-links a.active { color: #fff; }
+    .nav-right { display: flex; align-items: center; gap: 14px; }
+    .search-wrap { position: relative; }
+    .search-wrap input {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 6px;
+      padding: 8px 14px 8px 36px;
+      color: #fff;
+      font-size: 13px;
+      width: 200px;
+      font-family: var(--font-body);
+      transition: border-color .2s, width .3s;
+    }
+    .search-wrap input:focus { outline: none; border-color: rgba(255,255,255,0.4); width: 240px; }
+    .search-wrap input::placeholder { color: var(--muted); }
+    .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 15px; pointer-events: none; }
+    .avatar {
+      width: 36px; height: 36px; border-radius: 6px;
+      background: var(--red); display: flex; align-items: center;
+      justify-content: center; font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 48px 80px;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a0808 35%, #080a1a 70%, #0a0a0a 100%);
+    }
+    .hero-glow {
+      position: absolute;
+      width: 700px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(229,9,20,0.18) 0%, transparent 70%);
+      top: -100px; left: 150px;
+      animation: glowPulse 4s ease-in-out infinite;
+    }
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.08); }
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, rgba(20,20,20,0.95) 45%, transparent 80%),
+                  linear-gradient(to top, rgba(20,20,20,0.8) 0%, transparent 50%);
+    }
+    .hero-poster {
+      position: absolute; right: 120px; top: 50%;
+      transform: translateY(-50%);
+      width: 280px; height: 400px; border-radius: 16px;
+      background: linear-gradient(160deg, #1e3a5f, #0a1628);
+      box-shadow: 0 50px 100px rgba(0,0,0,0.9), 0 0 60px rgba(229,9,20,0.1);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+      animation: posterFloat 6s ease-in-out infinite;
+    }
+    @keyframes posterFloat {
+      0%, 100% { transform: translateY(-50%) translateY(0); }
+      50% { transform: translateY(-50%) translateY(-12px); }
+    }
+    .poster-icon { font-size: 70px; }
+    .poster-title { font-family: var(--font-title); font-size: 2rem; letter-spacing: 4px; }
+    .poster-badge {
+      background: var(--red); font-size: 11px; font-weight: 700;
+      padding: 4px 14px; border-radius: 4px; letter-spacing: 1.5px;
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 560px; }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(229,9,20,0.12); border: 1px solid rgba(229,9,20,0.3);
+      padding: 5px 14px; border-radius: 20px; font-size: 11px;
+      color: rgba(255,120,120,0.9); margin-bottom: 20px;
+      letter-spacing: 1.5px; text-transform: uppercase;
+    }
+    .hero h1 {
+      font-family: var(--font-title);
+      font-size: 5.5rem; line-height: 0.95; letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+    .hero h1 span { color: var(--red); }
+    .hero-meta {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 18px; font-size: 13px; color: var(--muted);
+    }
+    .rating-badge {
+      background: rgba(255,215,0,0.15);
+      border: 1px solid rgba(255,215,0,0.3);
+      color: #ffd700; padding: 3px 10px; border-radius: 4px; font-weight: 600;
+    }
+    .sep { color: rgba(255,255,255,0.2); }
+    .hero p { font-size: 15px; line-height: 1.75; color: var(--muted); margin-bottom: 32px; max-width: 440px; }
+    .hero-actions { display: flex; gap: 14px; }
+    .btn-play {
+      background: var(--red); color: #fff; border: none;
+      padding: 14px 32px; border-radius: 6px; font-size: 15px; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; gap: 10px;
+      font-family: var(--font-body); transition: background .2s, transform .1s;
+    }
+    .btn-play:hover { background: #f40612; transform: translateY(-1px); }
+    .btn-play:active { transform: translateY(0); }
+    .btn-info {
+      background: rgba(255,255,255,0.1); color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 14px 26px; border-radius: 6px; font-size: 15px;
+      cursor: pointer; font-family: var(--font-body); transition: background .2s;
+    }
+    .btn-info:hover { background: rgba(255,255,255,0.2); }
+
+    /* ── MAIN CONTENT ── */
+    main { padding-top: 40px; }
+
+    /* ── GENRES ── */
+    .genre-section { padding: 40px 48px 8px; }
+    .genres { display: flex; flex-wrap: wrap; gap: 10px; }
+    .genre-pill {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 8px 20px; border-radius: 24px; font-size: 13px;
+      cursor: pointer; transition: all .2s; font-weight: 500; user-select: none;
+    }
+    .genre-pill:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.08); }
+    .genre-pill.active { background: var(--red); border-color: var(--red); color: #fff; }
+
+    /* ── ROW SECTION ── */
+    .section { padding: 36px 48px; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .section-title { font-size: 19px; font-weight: 600; }
+    .section-title span { color: var(--red); }
+    .see-all { font-size: 12px; color: var(--red); cursor: pointer; text-decoration: none; font-weight: 500; letter-spacing: 0.5px; }
+    .see-all:hover { color: #ff4c54; }
+
+    .row { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 12px; }
+    .row::-webkit-scrollbar { height: 4px; }
+    .row::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); border-radius: 2px; }
+    .row::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+    .card {
+      flex: 0 0 170px; border-radius: 10px; overflow: hidden;
+      cursor: pointer; transition: transform .28s, box-shadow .28s;
+      position: relative; background: var(--card-bg);
+    }
+    .card:hover { transform: scale(1.07); box-shadow: 0 24px 50px rgba(0,0,0,0.7); z-index: 2; }
+    .card-thumb {
+      width: 100%; height: 230px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 10px;
+    }
+    .card-emoji { font-size: 46px; }
+    .card-label { font-size: 10px; font-weight: 600; letter-spacing: 2px; opacity: 0.45; text-transform: uppercase; }
+    .card-info { padding: 10px 12px 14px; }
+    .card-name { font-size: 13px; font-weight: 500; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-sub { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+    .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
+    .card-badge {
+      position: absolute; top: 10px; left: 10px;
+      background: var(--red); font-size: 10px; font-weight: 700;
+      padding: 3px 8px; border-radius: 4px; letter-spacing: 0.5px;
+    }
+    .card-badge.new { background: #03c04a; }
+
+    /* ── PROMO BANNER ── */
+    .promo {
+      margin: 10px 48px 20px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(229,9,20,0.14), rgba(229,9,20,0.04));
+      border: 1px solid rgba(229,9,20,0.2);
+      padding: 36px 48px;
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    }
+    .promo-text h3 { font-family: var(--font-title); font-size: 2.2rem; letter-spacing: 2px; margin-bottom: 8px; }
+    .promo-text p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+    .promo-text p strong { color: var(--red); }
+    .btn-promo {
+      background: var(--red); color: #fff; border: none;
+      padding: 14px 32px; border-radius: 8px; font-size: 15px; font-weight: 600;
+      cursor: pointer; font-family: var(--font-body); white-space: nowrap;
+      transition: background .2s, transform .1s;
+    }
+    .btn-promo:hover { background: #f40612; transform: translateY(-1px); }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #1c1c1c; border-radius: 16px; width: 90%; max-width: 580px;
+      overflow: hidden; border: 1px solid rgba(255,255,255,0.08);
+      animation: modalIn .25s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .modal-thumb {
+      height: 240px; display: flex; align-items: center; justify-content: center;
+      font-size: 80px; position: relative;
+    }
+    .modal-close {
+      position: absolute; top: 14px; right: 14px;
+      background: rgba(0,0,0,0.6); border: none; color: #fff;
+      width: 34px; height: 34px; border-radius: 50%; font-size: 18px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .modal-body { padding: 24px 28px 28px; }
+    .modal-title { font-family: var(--font-title); font-size: 2rem; letter-spacing: 2px; margin-bottom: 10px; }
+    .modal-meta { display: flex; gap: 12px; font-size: 13px; color: var(--muted); margin-bottom: 14px; align-items: center; }
+    .modal-desc { font-size: 14px; line-height: 1.75; color: var(--muted); margin-bottom: 22px; }
+    .modal-actions { display: flex; gap: 12px; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 36px 48px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
+      flex-wrap: wrap;
+    }
+    .footer-logo { font-family: var(--font-title); font-size: 1.5rem; color: var(--red); letter-spacing: 3px; }
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .footer-links a { font-size: 12px; color: var(--muted); text-decoration: none; }
+    .footer-links a:hover { color: #fff; }
+    .footer-copy { font-size: 12px; color: rgba(255,255,255,0.2); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 14px 20px; }
+      .nav-links { display: none; }
+      .hero { padding: 0 20px 60px; min-height: 90vh; }
+      .hero-poster { display: none; }
+      .hero h1 { font-size: 3.5rem; }
+      .genre-section, .section, .promo { padding-left: 20px; padding-right: 20px; }
+      .promo { flex-direction: column; gap: 20px; }
+      .modal { width: 95%; }
+      footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">SINEMA</div>
+  <div class="nav-links">
+    <a href="#" class="active">Beranda</a>
+    <a href="#">Film</a>
+    <a href="#">Serial</a>
+    <a href="#">Anime</a>
+    <a href="#">Daftar Saya</a>
+  </div>
+  <div class="nav-right">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Cari judul, aktor...">
+    </div>
+    <div class="avatar">RS</div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-poster">
+    <div class="poster-icon">🎬</div>
+    <div class="poster-title">ECLIPSE</div>
+    <div class="poster-badge">ORIGINAL</div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-tag">🔴 &nbsp; Sinema Original</div>
+    <h1>ECLIPSE<br><span>MALAM</span></h1>
+    <div class="hero-meta">
+      <span class="rating-badge">★ 8.7</span>
+      <span>2024</span>
+      <span class="sep">|</span>
+      <span>2j 18m</span>
+      <span class="sep">|</span>
+      <span>Thriller</span>
+    </div>
+    <p>Seorang detektif menemukan kebenaran gelap di balik menghilangnya ratusan warga kota ketika gerhana total terjadi. Tidak ada yang aman. Tidak ada yang bisa dipercaya.</p>
+    <div class="hero-actions">
+      <button class="btn-play">▶ &nbsp;Tonton Sekarang</button>
+      <button class="btn-info" onclick="openModal('eclipse')">ℹ &nbsp;Info Lebih</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+  <div class="genre-section">
+    <div class="genres" id="genres">
+      <div class="genre-pill active" onclick="filterGenre(this,'Semua')">Semua</div>
+      <div class="genre-pill" onclick="filterGenre(this,'Aksi')">Aksi</div>
+      <div class="genre-pill" onclick="filterGenre(this,'Drama')">Drama</div>
+      <div class="genre-pill" onclick="filterGenre(this,'Komedi')">Komedi</div>
+      <div class="genre-pill" onclick="filterGenre(this,'Horor')">Horor</div>
+      <div class="genre-pill" onclick="filterGenre(this,'Sci-Fi')">Sci-Fi</div>
+      <div class="genre-pill" onclick="filterGenre(this,'Anime')">Anime</div>
+      <div class="genre-pill" onclick="filterGenre(this,'Dokumenter')">Dokumenter</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🔥 <span>Trending</span> Minggu Ini</div>
+      <a class="see-all" href="#">Lihat Semua →</a>
+    </div>
+    <div class="row" id="trending-row"></div>
+  </div>
+
+  <div class="promo">
+    <div class="promo-text">
+      <h3>SINEMA PREMIUM</h3>
+      <p>Akses tak terbatas ke <strong>10.000+ judul</strong> film & serial terbaik.<br>Mulai dari <strong>Rp 49.000/bulan</strong> — tanpa iklan, kualitas 4K.</p>
+    </div>
+    <button class="btn-promo">Coba Gratis 30 Hari →</button>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">✨ <span>Original</span> Sinema</div>
+      <a class="see-all" href="#">Lihat Semua →</a>
+    </div>
+    <div class="row" id="original-row"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🎭 Serial <span>Populer</span></div>
+      <a class="see-all" href="#">Lihat Semua →</a>
+    </div>
+    <div class="row" id="series-row"></div>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">SINEMA</div>
+  <div class="footer-links">
+    <a href="#">Tentang Kami</a>
+    <a href="#">Bantuan</a>
+    <a href="#">Karir</a>
+    <a href="#">Privasi</a>
+    <a href="#">Ketentuan Layanan</a>
+    <a href="#">Hubungi Kami</a>
+  </div>
+  <div class="footer-copy">© 2024 Sinema Inc. All rights reserved.</div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal" id="modal-box">
+    <div class="modal-thumb" id="modal-thumb">
+      <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">✕</button>
+      <span id="modal-emoji" style="font-size:80px"></span>
+    </div>
+    <div class="modal-body">
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-meta" id="modal-meta"></div>
+      <div class="modal-desc" id="modal-desc"></div>
+      <div class="modal-actions">
+        <button class="btn-play">▶ &nbsp;Tonton</button>
+        <button class="btn-info" onclick="document.getElementById('modal').classList.remove('open')">Tutup</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const movies = {
+  eclipse: {
+    emoji:'🎬', bg:'linear-gradient(160deg,#1e3a5f,#0a1628)',
+    name:'Eclipse Malam', year:'2024', genre:'Thriller', duration:'2j 18m', rating:'8.7',
+    desc:'Detektif Raka Wirawan menyelidiki hilangnya 200 warga saat gerhana bulan total. Semakin dalam ia menggali, semakin jelas ada konspirasi besar yang melibatkan orang-orang paling berkuasa di kota.',
+    badge:'ORIGINAL'
+  }
+};
+
+const trending = [
+  {id:'t1',emoji:'🌋',bg:'linear-gradient(160deg,#2d1b00,#5a3300)',name:'Lahar Merah',year:'2024',genre:'Aksi',badge:'BARU',badgeType:'new',desc:'Di lereng gunung berapi, sekelompok peneliti terjebak saat erupsi besar terjadi. Mereka harus memilih antara ilmu pengetahuan dan nyawa mereka.'},
+  {id:'t2',emoji:'👁️',bg:'linear-gradient(160deg,#1a001a,#3d0050)',name:'Mata Ketiga',year:'2023',genre:'Horor',badge:'TOP 1',desc:'Setelah kecelakaan, seorang perempuan mulai melihat hal-hal yang tidak bisa dilihat orang lain — dan makhluk-makhluk itu tahu bahwa ia bisa melihat mereka.'},
+  {id:'t3',emoji:'🚀',bg:'linear-gradient(160deg,#00142b,#002a55)',name:'Orbit 7',year:'2024',genre:'Sci-Fi',badge:'BARU',badgeType:'new',desc:'Misi luar angkasa ke planet baru berubah menjadi mimpi buruk ketika kru menemukan bahwa mereka tidak sendirian di kapal.'},
+  {id:'t4',emoji:'🗡️',bg:'linear-gradient(160deg,#1a0d00,#3d2000)',name:'Pedang Nusantara',year:'2024',genre:'Aksi',badge:'',desc:'Kisah epik seorang prajurit kerajaan Majapahit yang mempertaruhkan segalanya demi melindungi tanah airnya dari penjajah.'},
+  {id:'t5',emoji:'🌊',bg:'linear-gradient(160deg,#001433,#002966)',name:'Samudra Biru',year:'2023',genre:'Petualangan',badge:'TOP 5',desc:'Sepasang penyelam menemukan kota kuno yang tenggelam di kedalaman Laut Banda — tapi ada yang tidak ingin rahasia itu terkuak.'},
+  {id:'t6',emoji:'🦋',bg:'linear-gradient(160deg,#0a1a0a,#143314)',name:'Metamorfosa',year:'2024',genre:'Drama',badge:'BARU',badgeType:'new',desc:'Kisah transformasi seorang wanita muda di Jakarta yang berjuang menemukan jati dirinya di antara tekanan keluarga dan ambisi pribadinya.'},
+  {id:'t7',emoji:'⚡',bg:'linear-gradient(160deg,#1a1400,#332800)',name:'Kilat',year:'2023',genre:'Aksi',badge:'',desc:'Seorang pembalap jalanan diberi pilihan: penjara atau bergabung dengan agen rahasia untuk satu misi mustahil.'},
+];
+
+const originals = [
+  {id:'o1',emoji:'🌙',bg:'linear-gradient(160deg,#0a0014,#1a0033)',name:'Malam Abadi',year:'2024',genre:'Thriller',badge:'ORIGINAL',desc:'Di sebuah kota yang tidak pernah punya siang, seorang wartawan mengungkap kebenaran yang lebih gelap dari malamnya.'},
+  {id:'o2',emoji:'🔮',bg:'linear-gradient(160deg,#140014,#280028)',name:'Nubuat',year:'2024',genre:'Misteri',badge:'ORIGINAL',desc:'Seorang peramal menemukan bahwa setiap visinya yang terwujud mengambil sepotong jiwa orang yang ia cintai.'},
+  {id:'o3',emoji:'🏔️',bg:'linear-gradient(160deg,#001414,#002828)',name:'Puncak Sunyi',year:'2023',genre:'Drama',badge:'ORIGINAL',desc:'Di puncak gunung tertinggi Indonesia, empat pendaki harus menghadapi rahasia kelam yang telah mereka kubur bersama 10 tahun lalu.'},
+  {id:'o4',emoji:'🐉',bg:'linear-gradient(160deg,#1a0500,#330a00)',name:'Sang Naga',year:'2024',genre:'Fantasi',badge:'ORIGINAL',desc:'Legenda naga Batak ternyata bukan sekadar mitos — dan seorang anak muda terpilih untuk menjadi penjaganya.'},
+  {id:'o5',emoji:'🎭',bg:'linear-gradient(160deg,#14000a,#280014)',name:'Topeng Dua Wajah',year:'2024',genre:'Drama',badge:'ORIGINAL',desc:'Aktris panggung ternama menyembunyikan identitas aslinya selama 20 tahun. Ketika tabirnya mulai terbuka, segalanya runtuh.'},
+  {id:'o6',emoji:'🌺',bg:'linear-gradient(160deg,#1a0014,#33002a)',name:'Bunga Terakhir',year:'2023',genre:'Romansa',badge:'ORIGINAL',desc:'Kisah cinta yang menembus batas waktu antara dua jiwa yang selalu bertemu di saat yang salah — kecuali untuk yang terakhir kalinya.'},
+];
+
+const series = [
+  {id:'s1',emoji:'🏙️',bg:'linear-gradient(160deg,#001428,#003060)',name:'Kota Tanpa Batas',year:'S2 • 2024',genre:'Crime',badge:'BARU',badgeType:'new',desc:'Serial crime drama tentang korupsi di jantung ibu kota. Musim 2 mengungkap jaringan lebih dalam dari yang pernah dibayangkan.'},
+  {id:'s2',emoji:'🧬',bg:'linear-gradient(160deg,#001a0a,#003314)',name:'Gen-X',year:'S1 • 2024',genre:'Sci-Fi',badge:'BARU',badgeType:'new',desc:'Di tahun 2047, perusahaan biotek menciptakan generasi manusia baru. Tapi tidak semua "penciptaan" mau tunduk pada penciptanya.'},
+  {id:'s3',emoji:'👨‍👩‍👧',bg:'linear-gradient(160deg,#1a0800,#331500)',name:'Keluarga Kami',year:'S3 • 2023',genre:'Drama',badge:'',desc:'Drama keluarga kontemporer yang mengisahkan tiga generasi yang hidup bersama di satu rumah di Surabaya.'},
+  {id:'s4',emoji:'🕵️',bg:'linear-gradient(160deg,#0d0d0d,#1a1a1a)',name:'Detektif Bayangan',year:'S4 • 2024',genre:'Thriller',badge:'TOP 3',desc:'Detektif Wirda kembali untuk kasus terberatnya: pembunuh berantai yang meninggalkan pesan khusus untuknya di setiap TKP.'},
+  {id:'s5',emoji:'🏖️',bg:'linear-gradient(160deg,#00141a,#002833)',name:'Tepi Pantai',year:'S2 • 2023',genre:'Romansa',badge:'',desc:'Romansa musim panas di Lombok antara seorang arsitek Jakarta dan nelayan lokal. Apakah cinta bisa mengalahkan jarak?'},
+  {id:'s6',emoji:'⚔️',bg:'linear-gradient(160deg,#14080a,#281015)',name:'Perang Kerajaan',year:'S1 • 2024',genre:'Fantasi',badge:'BARU',badgeType:'new',desc:'Kisah fantasi epik berlatar kerajaan Nusantara kuno. Lima kerajaan bersaing memperebutkan artefak legendaris yang bisa mengubah nasib dunia.'},
+];
+
+function renderCard(data) {
+  return `
+    <div class="card" onclick="openModal('${data.id}')">
+      ${data.badge ? `<div class="card-badge ${data.badgeType||''}">${data.badge}</div>` : ''}
+      <div class="card-thumb" style="background:${data.bg}">
+        <div class="card-emoji">${data.emoji}</div>
+        <div class="card-label">${data.genre}</div>
+      </div>
+      <div class="card-info">
+        <div class="card-name">${data.name}</div>
+        <div class="card-sub">${data.year} <div class="dot"></div> ${data.genre}</div>
+      </div>
+    </div>`;
+}
+
+function renderRow(id, data) {
+  document.getElementById(id).innerHTML = data.map(renderCard).join('');
+}
+
+renderRow('trending-row', trending);
+renderRow('original-row', originals);
+renderRow('series-row', series);
+
+// Build lookup map
+const allMovies = {};
+[...trending, ...originals, ...series].forEach(m => allMovies[m.id] = m);
+allMovies['eclipse'] = movies.eclipse;
+
+function openModal(id) {
+  const m = allMovies[id];
+  if (!m) return;
+  document.getElementById('modal-thumb').style.background = m.bg || 'linear-gradient(160deg,#1a1a1a,#2a2a2a)';
+  document.getElementById('modal-emoji').textContent = m.emoji;
+  document.getElementById('modal-title').textContent = m.name;
+  document.getElementById('modal-meta').innerHTML = `
+    <span class="rating-badge">★ ${m.rating || '8.5'}</span>
+    <span>${m.year}</span>
+    <span class="sep">|</span>
+    <span>${m.duration || '1j 45m'}</span>
+    <span class="sep">|</span>
+    <span>${m.genre}</span>
+  `;
+  document.getElementById('modal-desc').textContent = m.desc || '';
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal')) {
+    document.getElementById('modal').classList.remove('open');
+  }
+}
+
+function filterGenre(el, genre) {
+  document.querySelectorAll('.genre-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  const all = [...trending, ...originals, ...series];
+  const filtered = genre === 'Semua' ? trending : all.filter(m => m.genre === genre);
+  renderRow('trending-row', filtered.length ? filtered : all.slice(0,4));
+}
+
+// Navbar scroll effect
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav');
+  if (window.scrollY > 60) {
+    nav.style.background = 'rgba(20,20,20,0.98)';
+  } else {
+    nav.style.background = 'rgba(20,20,20,0.95)';
+  }
+});
+</script>
+
+</body>
+</html>
