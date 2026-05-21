@@ -3,420 +3,356 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sinema — Streaming Film & Serial</title>
+  <title>FlixID — Nonton Film, Serial & Anime</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
     :root {
       --red: #E50914;
-      --dark: #141414;
-      --card-bg: #1c1c1c;
+      --dark: #0f0f0f;
+      --card-bg: #1a1a1a;
       --text: #ffffff;
       --muted: #b3b3b3;
       --font-title: 'Bebas Neue', sans-serif;
       --font-body: 'DM Sans', sans-serif;
     }
-
     html { scroll-behavior: smooth; }
+    body { background: var(--dark); color: var(--text); font-family: var(--font-body); overflow-x: hidden; min-height: 100vh; }
 
-    body {
-      background: var(--dark);
-      color: var(--text);
-      font-family: var(--font-body);
-      overflow-x: hidden;
-      min-height: 100vh;
-    }
-
-    /* ── NAV ── */
+    /* NAV */
     nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 48px;
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      background: rgba(20,20,20,0.95);
-      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 48px; position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(15,15,15,0.96); backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(255,255,255,0.05);
     }
-    .logo { font-family: var(--font-title); font-size: 2.2rem; color: var(--red); letter-spacing: 3px; cursor: pointer; }
-    .nav-links { display: flex; gap: 24px; }
+    .logo { font-family: var(--font-title); font-size: 2rem; letter-spacing: 2px; cursor: pointer; }
+    .logo span:first-child { color: #fff; }
+    .logo span:last-child { color: var(--red); }
+    .nav-links { display: flex; gap: 22px; }
     .nav-links a { color: var(--muted); font-size: 14px; text-decoration: none; transition: color .2s; }
     .nav-links a:hover, .nav-links a.active { color: #fff; }
     .nav-right { display: flex; align-items: center; gap: 14px; }
     .search-wrap { position: relative; }
     .search-wrap input {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 6px;
-      padding: 8px 14px 8px 36px;
-      color: #fff;
-      font-size: 13px;
-      width: 200px;
-      font-family: var(--font-body);
-      transition: border-color .2s, width .3s;
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 6px; padding: 8px 14px 8px 34px; color: #fff; font-size: 13px;
+      width: 190px; font-family: var(--font-body); transition: border-color .2s, width .3s;
     }
-    .search-wrap input:focus { outline: none; border-color: rgba(255,255,255,0.4); width: 240px; }
+    .search-wrap input:focus { outline: none; border-color: rgba(255,255,255,0.4); width: 230px; }
     .search-wrap input::placeholder { color: var(--muted); }
-    .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 15px; pointer-events: none; }
-    .avatar {
-      width: 36px; height: 36px; border-radius: 6px;
-      background: var(--red); display: flex; align-items: center;
-      justify-content: center; font-size: 13px; font-weight: 600; cursor: pointer;
-    }
+    .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; font-size: 14px; }
+    .avatar { width: 34px; height: 34px; border-radius: 6px; background: var(--red); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; cursor: pointer; }
 
-    /* ── HERO ── */
+    /* HERO */
     .hero {
-      position: relative;
-      min-height: 100vh;
-      display: flex;
-      align-items: flex-end;
-      padding: 0 48px 80px;
-      overflow: hidden;
+      position: relative; min-height: 100vh;
+      display: flex; align-items: flex-end;
+      padding: 0 48px 80px; overflow: hidden;
     }
-    .hero-bg {
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, #0a0a0a 0%, #1a0808 35%, #080a1a 70%, #0a0a0a 100%);
-    }
+    .hero-bg { position: absolute; inset: 0; background: linear-gradient(135deg,#0a0a0a 0%,#1a0505 35%,#050a1a 70%,#0a0a0a 100%); }
     .hero-glow {
-      position: absolute;
-      width: 700px; height: 500px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(229,9,20,0.18) 0%, transparent 70%);
-      top: -100px; left: 150px;
-      animation: glowPulse 4s ease-in-out infinite;
+      position: absolute; width: 800px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(229,9,20,0.16) 0%, transparent 65%);
+      top: -120px; left: 100px;
+      animation: glowPulse 5s ease-in-out infinite;
     }
-    @keyframes glowPulse {
-      0%, 100% { opacity: 0.6; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.08); }
-    }
+    @keyframes glowPulse { 0%,100%{opacity:.6;transform:scale(1)} 50%{opacity:1;transform:scale(1.1)} }
     .hero-grid {
       position: absolute; inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-      background-size: 64px 64px;
+      background-image: linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px), linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);
+      background-size: 60px 60px;
     }
     .hero-overlay {
       position: absolute; inset: 0;
-      background: linear-gradient(to right, rgba(20,20,20,0.95) 45%, transparent 80%),
-                  linear-gradient(to top, rgba(20,20,20,0.8) 0%, transparent 50%);
+      background: linear-gradient(to right, rgba(15,15,15,0.97) 40%, transparent 80%),
+                  linear-gradient(to top, rgba(15,15,15,0.85) 0%, transparent 50%);
     }
     .hero-poster {
-      position: absolute; right: 120px; top: 50%;
-      transform: translateY(-50%);
-      width: 280px; height: 400px; border-radius: 16px;
-      background: linear-gradient(160deg, #1e3a5f, #0a1628);
-      box-shadow: 0 50px 100px rgba(0,0,0,0.9), 0 0 60px rgba(229,9,20,0.1);
+      position: absolute; right: 100px; top: 50%; transform: translateY(-50%);
+      width: 290px; height: 420px; border-radius: 18px;
+      background: linear-gradient(160deg,#1c1228,#0e0818);
+      box-shadow: 0 60px 120px rgba(0,0,0,0.95), 0 0 80px rgba(229,9,20,0.08);
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
       border: 1px solid rgba(255,255,255,0.06);
       animation: posterFloat 6s ease-in-out infinite;
     }
-    @keyframes posterFloat {
-      0%, 100% { transform: translateY(-50%) translateY(0); }
-      50% { transform: translateY(-50%) translateY(-12px); }
-    }
-    .poster-icon { font-size: 70px; }
+    @keyframes posterFloat { 0%,100%{transform:translateY(-50%) translateY(0)} 50%{transform:translateY(-50%) translateY(-14px)} }
+    .poster-icon { font-size: 72px; }
     .poster-title { font-family: var(--font-title); font-size: 2rem; letter-spacing: 4px; }
-    .poster-badge {
-      background: var(--red); font-size: 11px; font-weight: 700;
-      padding: 4px 14px; border-radius: 4px; letter-spacing: 1.5px;
-    }
+    .poster-badge { background: var(--red); font-size: 11px; font-weight: 700; padding: 4px 14px; border-radius: 4px; letter-spacing: 1.5px; }
     .hero-content { position: relative; z-index: 2; max-width: 560px; }
     .hero-tag {
       display: inline-flex; align-items: center; gap: 8px;
       background: rgba(229,9,20,0.12); border: 1px solid rgba(229,9,20,0.3);
       padding: 5px 14px; border-radius: 20px; font-size: 11px;
-      color: rgba(255,120,120,0.9); margin-bottom: 20px;
-      letter-spacing: 1.5px; text-transform: uppercase;
+      color: rgba(255,130,130,0.9); margin-bottom: 20px; letter-spacing: 1.5px; text-transform: uppercase;
     }
-    .hero h1 {
-      font-family: var(--font-title);
-      font-size: 5.5rem; line-height: 0.95; letter-spacing: 2px;
-      margin-bottom: 16px;
-    }
+    .hero h1 { font-family: var(--font-title); font-size: 5.5rem; line-height: 0.95; letter-spacing: 2px; margin-bottom: 16px; }
     .hero h1 span { color: var(--red); }
-    .hero-meta {
-      display: flex; align-items: center; gap: 14px;
-      margin-bottom: 18px; font-size: 13px; color: var(--muted);
-    }
-    .rating-badge {
-      background: rgba(255,215,0,0.15);
-      border: 1px solid rgba(255,215,0,0.3);
-      color: #ffd700; padding: 3px 10px; border-radius: 4px; font-weight: 600;
-    }
+    .hero-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+    .rating-badge { background: rgba(255,215,0,0.15); border: 1px solid rgba(255,215,0,0.3); color: #ffd700; padding: 3px 10px; border-radius: 4px; font-weight: 600; }
     .sep { color: rgba(255,255,255,0.2); }
     .hero p { font-size: 15px; line-height: 1.75; color: var(--muted); margin-bottom: 32px; max-width: 440px; }
-    .hero-actions { display: flex; gap: 14px; }
-    .btn-play {
-      background: var(--red); color: #fff; border: none;
-      padding: 14px 32px; border-radius: 6px; font-size: 15px; font-weight: 600;
-      cursor: pointer; display: flex; align-items: center; gap: 10px;
-      font-family: var(--font-body); transition: background .2s, transform .1s;
-    }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-play { background: var(--red); color: #fff; border: none; padding: 14px 30px; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: var(--font-body); transition: background .2s, transform .1s; }
     .btn-play:hover { background: #f40612; transform: translateY(-1px); }
-    .btn-play:active { transform: translateY(0); }
-    .btn-info {
-      background: rgba(255,255,255,0.1); color: #fff;
-      border: 1px solid rgba(255,255,255,0.2);
-      padding: 14px 26px; border-radius: 6px; font-size: 15px;
-      cursor: pointer; font-family: var(--font-body); transition: background .2s;
-    }
-    .btn-info:hover { background: rgba(255,255,255,0.2); }
+    .btn-info { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 14px 24px; border-radius: 6px; font-size: 15px; cursor: pointer; font-family: var(--font-body); transition: background .2s; }
+    .btn-info:hover { background: rgba(255,255,255,0.18); }
 
-    /* ── MAIN CONTENT ── */
-    main { padding-top: 40px; }
+    /* TABS */
+    .tabs-section { padding: 36px 48px 0; }
+    .tabs { display: flex; gap: 0; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 28px; }
+    .tab { padding: 10px 22px; font-size: 14px; font-weight: 500; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s; }
+    .tab:hover { color: #fff; }
+    .tab.active { color: #fff; border-bottom-color: var(--red); }
 
-    /* ── GENRES ── */
-    .genre-section { padding: 40px 48px 8px; }
-    .genres { display: flex; flex-wrap: wrap; gap: 10px; }
-    .genre-pill {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.12);
-      padding: 8px 20px; border-radius: 24px; font-size: 13px;
-      cursor: pointer; transition: all .2s; font-weight: 500; user-select: none;
-    }
-    .genre-pill:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.08); }
-    .genre-pill.active { background: var(--red); border-color: var(--red); color: #fff; }
+    /* GENRES */
+    .genres { display: flex; flex-wrap: wrap; gap: 10px; padding: 0 48px 8px; }
+    .genre-pill { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 7px 18px; border-radius: 24px; font-size: 13px; cursor: pointer; transition: all .2s; font-weight: 500; user-select: none; }
+    .genre-pill:hover { border-color: rgba(255,255,255,0.25); }
+    .genre-pill.active { background: var(--red); border-color: var(--red); }
 
-    /* ── ROW SECTION ── */
-    .section { padding: 36px 48px; }
-    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-    .section-title { font-size: 19px; font-weight: 600; }
+    /* ROWS */
+    .section { padding: 32px 48px; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .section-title { font-size: 18px; font-weight: 600; }
     .section-title span { color: var(--red); }
-    .see-all { font-size: 12px; color: var(--red); cursor: pointer; text-decoration: none; font-weight: 500; letter-spacing: 0.5px; }
-    .see-all:hover { color: #ff4c54; }
+    .see-all { font-size: 12px; color: var(--red); cursor: pointer; text-decoration: none; font-weight: 500; }
+    .row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; }
+    .row::-webkit-scrollbar { height: 3px; }
+    .row::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
 
-    .row { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 12px; }
-    .row::-webkit-scrollbar { height: 4px; }
-    .row::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); border-radius: 2px; }
-    .row::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
-
-    .card {
-      flex: 0 0 170px; border-radius: 10px; overflow: hidden;
-      cursor: pointer; transition: transform .28s, box-shadow .28s;
-      position: relative; background: var(--card-bg);
-    }
-    .card:hover { transform: scale(1.07); box-shadow: 0 24px 50px rgba(0,0,0,0.7); z-index: 2; }
-    .card-thumb {
-      width: 100%; height: 230px;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 10px;
-    }
-    .card-emoji { font-size: 46px; }
-    .card-label { font-size: 10px; font-weight: 600; letter-spacing: 2px; opacity: 0.45; text-transform: uppercase; }
-    .card-info { padding: 10px 12px 14px; }
-    .card-name { font-size: 13px; font-weight: 500; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .card-sub { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+    .card { flex: 0 0 165px; border-radius: 10px; overflow: hidden; cursor: pointer; transition: transform .28s, box-shadow .28s; position: relative; background: var(--card-bg); }
+    .card:hover { transform: scale(1.07); box-shadow: 0 28px 56px rgba(0,0,0,0.75); z-index: 2; }
+    .card-thumb { width: 100%; height: 225px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+    .card-emoji { font-size: 44px; }
+    .card-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; opacity: 0.4; text-transform: uppercase; }
+    .card-info { padding: 10px 12px 13px; }
+    .card-name { font-size: 13px; font-weight: 500; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-sub { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
     .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
-    .card-badge {
-      position: absolute; top: 10px; left: 10px;
-      background: var(--red); font-size: 10px; font-weight: 700;
-      padding: 3px 8px; border-radius: 4px; letter-spacing: 0.5px;
-    }
+    .card-badge { position: absolute; top: 8px; left: 8px; background: var(--red); font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.5px; }
     .card-badge.new { background: #03c04a; }
+    .card-badge.top { background: #f5a623; color: #000; }
 
-    /* ── PROMO BANNER ── */
-    .promo {
-      margin: 10px 48px 20px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, rgba(229,9,20,0.14), rgba(229,9,20,0.04));
-      border: 1px solid rgba(229,9,20,0.2);
-      padding: 36px 48px;
-      display: flex; align-items: center; justify-content: space-between; gap: 24px;
-    }
+    /* PROMO */
+    .promo { margin: 8px 48px 8px; border-radius: 18px; background: linear-gradient(135deg,rgba(229,9,20,0.13),rgba(229,9,20,0.03)); border: 1px solid rgba(229,9,20,0.18); padding: 34px 44px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
     .promo-text h3 { font-family: var(--font-title); font-size: 2.2rem; letter-spacing: 2px; margin-bottom: 8px; }
     .promo-text p { font-size: 14px; color: var(--muted); line-height: 1.6; }
     .promo-text p strong { color: var(--red); }
-    .btn-promo {
-      background: var(--red); color: #fff; border: none;
-      padding: 14px 32px; border-radius: 8px; font-size: 15px; font-weight: 600;
-      cursor: pointer; font-family: var(--font-body); white-space: nowrap;
-      transition: background .2s, transform .1s;
-    }
-    .btn-promo:hover { background: #f40612; transform: translateY(-1px); }
+    .btn-promo { background: var(--red); color: #fff; border: none; padding: 13px 30px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: var(--font-body); white-space: nowrap; transition: background .2s; }
+    .btn-promo:hover { background: #f40612; }
 
-    /* ── MODAL ── */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0; z-index: 200;
-      background: rgba(0,0,0,0.85); backdrop-filter: blur(4px);
-      align-items: center; justify-content: center;
-    }
+    /* MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.88); backdrop-filter: blur(6px); align-items: center; justify-content: center; }
     .modal-overlay.open { display: flex; }
-    .modal {
-      background: #1c1c1c; border-radius: 16px; width: 90%; max-width: 580px;
-      overflow: hidden; border: 1px solid rgba(255,255,255,0.08);
-      animation: modalIn .25s ease;
-    }
-    @keyframes modalIn {
-      from { opacity: 0; transform: scale(0.92); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-    .modal-thumb {
-      height: 240px; display: flex; align-items: center; justify-content: center;
-      font-size: 80px; position: relative;
-    }
-    .modal-close {
-      position: absolute; top: 14px; right: 14px;
-      background: rgba(0,0,0,0.6); border: none; color: #fff;
-      width: 34px; height: 34px; border-radius: 50%; font-size: 18px;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-    }
-    .modal-body { padding: 24px 28px 28px; }
+    .modal { background: #1a1a1a; border-radius: 18px; width: 90%; max-width: 580px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); animation: modalIn .22s ease; }
+    @keyframes modalIn { from{opacity:0;transform:scale(0.9)} to{opacity:1;transform:scale(1)} }
+    .modal-thumb { height: 240px; display: flex; align-items: center; justify-content: center; font-size: 82px; position: relative; }
+    .modal-close { position: absolute; top: 14px; right: 14px; background: rgba(0,0,0,0.65); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer; }
+    .modal-body { padding: 24px 28px 30px; }
     .modal-title { font-family: var(--font-title); font-size: 2rem; letter-spacing: 2px; margin-bottom: 10px; }
-    .modal-meta { display: flex; gap: 12px; font-size: 13px; color: var(--muted); margin-bottom: 14px; align-items: center; }
+    .modal-meta { display: flex; gap: 10px; font-size: 13px; color: var(--muted); margin-bottom: 14px; align-items: center; flex-wrap: wrap; }
     .modal-desc { font-size: 14px; line-height: 1.75; color: var(--muted); margin-bottom: 22px; }
     .modal-actions { display: flex; gap: 12px; }
 
-    /* ── FOOTER ── */
-    footer {
-      padding: 36px 48px;
-      border-top: 1px solid rgba(255,255,255,0.06);
-      display: flex; align-items: center; justify-content: space-between; gap: 24px;
-      flex-wrap: wrap;
-    }
-    .footer-logo { font-family: var(--font-title); font-size: 1.5rem; color: var(--red); letter-spacing: 3px; }
-    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
-    .footer-links a { font-size: 12px; color: var(--muted); text-decoration: none; }
-    .footer-links a:hover { color: #fff; }
+    /* FOOTER */
+    footer { padding: 36px 48px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .footer-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 32px; flex-wrap: wrap; margin-bottom: 28px; }
+    .footer-brand .footer-logo { font-family: var(--font-title); font-size: 1.8rem; letter-spacing: 2px; margin-bottom: 8px; }
+    .footer-brand .footer-logo span:first-child { color: #fff; }
+    .footer-brand .footer-logo span:last-child { color: var(--red); }
+    .footer-brand p { font-size: 13px; color: var(--muted); max-width: 220px; line-height: 1.6; }
+    .footer-cols { display: flex; gap: 48px; flex-wrap: wrap; }
+    .footer-col h4 { font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 14px; }
+    .footer-col a { display: block; font-size: 13px; color: var(--muted); text-decoration: none; margin-bottom: 9px; transition: color .2s; }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
     .footer-copy { font-size: 12px; color: rgba(255,255,255,0.2); }
+    .footer-badges { display: flex; gap: 8px; }
+    .badge-store { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 6px; font-size: 11px; color: var(--muted); cursor: pointer; }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 768px) {
-      nav { padding: 14px 20px; }
-      .nav-links { display: none; }
-      .hero { padding: 0 20px 60px; min-height: 90vh; }
-      .hero-poster { display: none; }
-      .hero h1 { font-size: 3.5rem; }
-      .genre-section, .section, .promo { padding-left: 20px; padding-right: 20px; }
-      .promo { flex-direction: column; gap: 20px; }
-      .modal { width: 95%; }
-      footer { flex-direction: column; align-items: flex-start; }
+    @media(max-width:768px){
+      nav{padding:14px 20px}
+      .nav-links{display:none}
+      .hero{padding:0 20px 60px;min-height:90vh}
+      .hero-poster{display:none}
+      .hero h1{font-size:3.5rem}
+      .tabs-section,.genres,.section,.promo{padding-left:20px;padding-right:20px}
+      .promo{flex-direction:column}
+      footer{padding:28px 20px}
+      .footer-top{flex-direction:column}
     }
   </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
-  <div class="logo">SINEMA</div>
+  <div class="logo"><span>Flix</span><span>ID</span></div>
   <div class="nav-links">
     <a href="#" class="active">Beranda</a>
     <a href="#">Film</a>
     <a href="#">Serial</a>
     <a href="#">Anime</a>
+    <a href="#">Hollywood</a>
     <a href="#">Daftar Saya</a>
   </div>
   <div class="nav-right">
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
-      <input type="text" placeholder="Cari judul, aktor...">
+      <input type="text" id="search-input" placeholder="Cari film, serial, anime...">
     </div>
-    <div class="avatar">RS</div>
+    <div class="avatar">ID</div>
   </div>
 </nav>
 
-<!-- HERO -->
 <div class="hero">
   <div class="hero-bg"></div>
   <div class="hero-glow"></div>
   <div class="hero-grid"></div>
   <div class="hero-overlay"></div>
   <div class="hero-poster">
-    <div class="poster-icon">🎬</div>
-    <div class="poster-title">ECLIPSE</div>
-    <div class="poster-badge">ORIGINAL</div>
+    <div class="poster-icon">⚔️</div>
+    <div class="poster-title">NUSANTARA</div>
+    <div class="poster-badge">FLIXID ORIGINAL</div>
   </div>
   <div class="hero-content">
-    <div class="hero-tag">🔴 &nbsp; Sinema Original</div>
-    <h1>ECLIPSE<br><span>MALAM</span></h1>
+    <div class="hero-tag">🔴 &nbsp; FlixID Original</div>
+    <h1>NUSANTARA<br><span>RISING</span></h1>
     <div class="hero-meta">
-      <span class="rating-badge">★ 8.7</span>
-      <span>2024</span>
-      <span class="sep">|</span>
-      <span>2j 18m</span>
-      <span class="sep">|</span>
-      <span>Thriller</span>
+      <span class="rating-badge">★ 9.1</span>
+      <span>2024</span><span class="sep">|</span>
+      <span>2j 45m</span><span class="sep">|</span>
+      <span>Aksi • Epik</span>
     </div>
-    <p>Seorang detektif menemukan kebenaran gelap di balik menghilangnya ratusan warga kota ketika gerhana total terjadi. Tidak ada yang aman. Tidak ada yang bisa dipercaya.</p>
+    <p>Ketika lima kerajaan Nusantara bersatu menghadapi invasi terbesar dalam sejarah, seorang prajurit muda tanpa nama bangkit menjadi legenda yang mengubah takdir bangsa.</p>
     <div class="hero-actions">
       <button class="btn-play">▶ &nbsp;Tonton Sekarang</button>
-      <button class="btn-info" onclick="openModal('eclipse')">ℹ &nbsp;Info Lebih</button>
+      <button class="btn-info" onclick="openModal('hero')">ℹ &nbsp;Info Lebih</button>
     </div>
   </div>
 </div>
 
-<!-- MAIN -->
-<main>
-  <div class="genre-section">
-    <div class="genres" id="genres">
-      <div class="genre-pill active" onclick="filterGenre(this,'Semua')">Semua</div>
-      <div class="genre-pill" onclick="filterGenre(this,'Aksi')">Aksi</div>
-      <div class="genre-pill" onclick="filterGenre(this,'Drama')">Drama</div>
-      <div class="genre-pill" onclick="filterGenre(this,'Komedi')">Komedi</div>
-      <div class="genre-pill" onclick="filterGenre(this,'Horor')">Horor</div>
-      <div class="genre-pill" onclick="filterGenre(this,'Sci-Fi')">Sci-Fi</div>
-      <div class="genre-pill" onclick="filterGenre(this,'Anime')">Anime</div>
-      <div class="genre-pill" onclick="filterGenre(this,'Dokumenter')">Dokumenter</div>
-    </div>
+<div class="tabs-section">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab(this,'semua')">Semua</div>
+    <div class="tab" onclick="switchTab(this,'indonesia')">🇮🇩 Indonesia</div>
+    <div class="tab" onclick="switchTab(this,'hollywood')">🎬 Hollywood</div>
+    <div class="tab" onclick="switchTab(this,'anime')">⛩️ Anime</div>
+    <div class="tab" onclick="switchTab(this,'serial')">📺 Serial</div>
   </div>
+</div>
 
-  <div class="section">
-    <div class="section-header">
-      <div class="section-title">🔥 <span>Trending</span> Minggu Ini</div>
-      <a class="see-all" href="#">Lihat Semua →</a>
-    </div>
-    <div class="row" id="trending-row"></div>
+<div class="genres">
+  <div class="genre-pill active" onclick="filterGenre(this,'Semua')">Semua</div>
+  <div class="genre-pill" onclick="filterGenre(this,'Aksi')">Aksi</div>
+  <div class="genre-pill" onclick="filterGenre(this,'Drama')">Drama</div>
+  <div class="genre-pill" onclick="filterGenre(this,'Komedi')">Komedi</div>
+  <div class="genre-pill" onclick="filterGenre(this,'Horor')">Horor</div>
+  <div class="genre-pill" onclick="filterGenre(this,'Sci-Fi')">Sci-Fi</div>
+  <div class="genre-pill" onclick="filterGenre(this,'Anime')">Anime</div>
+  <div class="genre-pill" onclick="filterGenre(this,'Romansa')">Romansa</div>
+  <div class="genre-pill" onclick="filterGenre(this,'Thriller')">Thriller</div>
+  <div class="genre-pill" onclick="filterGenre(this,'Fantasi')">Fantasi</div>
+</div>
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">🔥 <span>Trending</span> Sekarang</div>
+    <a class="see-all" href="#">Lihat Semua →</a>
   </div>
+  <div class="row" id="trending-row"></div>
+</div>
 
-  <div class="promo">
-    <div class="promo-text">
-      <h3>SINEMA PREMIUM</h3>
-      <p>Akses tak terbatas ke <strong>10.000+ judul</strong> film & serial terbaik.<br>Mulai dari <strong>Rp 49.000/bulan</strong> — tanpa iklan, kualitas 4K.</p>
-    </div>
-    <button class="btn-promo">Coba Gratis 30 Hari →</button>
+<div class="promo">
+  <div class="promo-text">
+    <h3>FLIXID PREMIUM</h3>
+    <p>Nikmati <strong>15.000+ judul</strong> film, serial & anime tanpa batas.<br>Kualitas <strong>4K HDR</strong> — mulai <strong>Rp 49.000/bulan</strong>, tanpa iklan.</p>
   </div>
+  <button class="btn-promo">Coba Gratis 30 Hari →</button>
+</div>
 
-  <div class="section">
-    <div class="section-header">
-      <div class="section-title">✨ <span>Original</span> Sinema</div>
-      <a class="see-all" href="#">Lihat Semua →</a>
-    </div>
-    <div class="row" id="original-row"></div>
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">🇮🇩 Film <span>Indonesia</span> Terbaik</div>
+    <a class="see-all" href="#">Lihat Semua →</a>
   </div>
+  <div class="row" id="indonesia-row"></div>
+</div>
 
-  <div class="section">
-    <div class="section-header">
-      <div class="section-title">🎭 Serial <span>Populer</span></div>
-      <a class="see-all" href="#">Lihat Semua →</a>
-    </div>
-    <div class="row" id="series-row"></div>
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">🎬 <span>Hollywood</span> Hits</div>
+    <a class="see-all" href="#">Lihat Semua →</a>
   </div>
-</main>
+  <div class="row" id="hollywood-row"></div>
+</div>
 
-<!-- FOOTER -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">⛩️ <span>Anime</span> Populer</div>
+    <a class="see-all" href="#">Lihat Semua →</a>
+  </div>
+  <div class="row" id="anime-row"></div>
+</div>
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">📺 Serial <span>Binge-Worthy</span></div>
+    <a class="see-all" href="#">Lihat Semua →</a>
+  </div>
+  <div class="row" id="serial-row"></div>
+</div>
+
 <footer>
-  <div class="footer-logo">SINEMA</div>
-  <div class="footer-links">
-    <a href="#">Tentang Kami</a>
-    <a href="#">Bantuan</a>
-    <a href="#">Karir</a>
-    <a href="#">Privasi</a>
-    <a href="#">Ketentuan Layanan</a>
-    <a href="#">Hubungi Kami</a>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo"><span>Flix</span><span>ID</span></div>
+      <p>Platform streaming terbaik untuk film Indonesia, Hollywood, dan Anime favoritmu.</p>
+    </div>
+    <div class="footer-cols">
+      <div class="footer-col">
+        <h4>Navigasi</h4>
+        <a href="#">Beranda</a>
+        <a href="#">Film Terbaru</a>
+        <a href="#">Serial</a>
+        <a href="#">Anime</a>
+        <a href="#">FlixID Original</a>
+      </div>
+      <div class="footer-col">
+        <h4>Akun</h4>
+        <a href="#">Login</a>
+        <a href="#">Daftar</a>
+        <a href="#">Paket Premium</a>
+        <a href="#">Daftar Saya</a>
+      </div>
+      <div class="footer-col">
+        <h4>Bantuan</h4>
+        <a href="#">Pusat Bantuan</a>
+        <a href="#">Hubungi Kami</a>
+        <a href="#">Kebijakan Privasi</a>
+        <a href="#">Syarat & Ketentuan</a>
+      </div>
+    </div>
   </div>
-  <div class="footer-copy">© 2024 Sinema Inc. All rights reserved.</div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2024 FlixID. All rights reserved. Made with ❤️ in Indonesia.</div>
+    <div class="footer-badges">
+      <div class="badge-store">📱 App Store</div>
+      <div class="badge-store">🤖 Google Play</div>
+      <div class="badge-store">📺 Smart TV</div>
+    </div>
+  </div>
 </footer>
 
 <!-- MODAL -->
 <div class="modal-overlay" id="modal" onclick="closeModal(event)">
-  <div class="modal" id="modal-box">
+  <div class="modal">
     <div class="modal-thumb" id="modal-thumb">
       <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">✕</button>
-      <span id="modal-emoji" style="font-size:80px"></span>
+      <span id="modal-emoji"></span>
     </div>
     <div class="modal-body">
       <div class="modal-title" id="modal-title"></div>
@@ -431,113 +367,117 @@
 </div>
 
 <script>
-const movies = {
-  eclipse: {
-    emoji:'🎬', bg:'linear-gradient(160deg,#1e3a5f,#0a1628)',
-    name:'Eclipse Malam', year:'2024', genre:'Thriller', duration:'2j 18m', rating:'8.7',
-    desc:'Detektif Raka Wirawan menyelidiki hilangnya 200 warga saat gerhana bulan total. Semakin dalam ia menggali, semakin jelas ada konspirasi besar yang melibatkan orang-orang paling berkuasa di kota.',
-    badge:'ORIGINAL'
-  }
+const data = {
+  trending: [
+    {id:'tr1',emoji:'⚔️',bg:'linear-gradient(160deg,#1a0a00,#3d1800)',name:'Nusantara Rising',year:'2024',genre:'Aksi',badge:'#1',badgeType:'top',rating:'9.1',duration:'2j 45m',desc:'Lima kerajaan Nusantara bersatu melawan invasi terbesar. Seorang prajurit muda bangkit menjadi legenda.'},
+    {id:'tr2',emoji:'👻',bg:'linear-gradient(160deg,#0a001a,#1a0030)',name:'Rumah Tua',year:'2024',genre:'Horor',badge:'BARU',badgeType:'new',rating:'8.3',duration:'1j 52m',desc:'Keluarga pindah ke rumah tua di pedesaan Jawa. Malam pertama, mereka sadar tidak sendirian.'},
+    {id:'tr3',emoji:'🦸',bg:'linear-gradient(160deg,#001433,#002a6e)',name:'Garuda Force',year:'2024',genre:'Aksi',badge:'#2',badgeType:'top',rating:'8.8',duration:'2j 10m',desc:'Tim superhero Indonesia pertama menghadapi ancaman yang datang dari masa depan.'},
+    {id:'tr4',emoji:'💘',bg:'linear-gradient(160deg,#1a000d,#330018)',name:'Cinta di Lombok',year:'2023',genre:'Romansa',badge:'',rating:'7.9',duration:'1j 48m',desc:'Arsitek Jakarta jatuh cinta pada nelayan lokal di Lombok. Bisakah cinta mengalahkan perbedaan dunia?'},
+    {id:'tr5',emoji:'🌌',bg:'linear-gradient(160deg,#000a1a,#001433)',name:'Antariksa',year:'2024',genre:'Sci-Fi',badge:'BARU',badgeType:'new',rating:'8.5',duration:'2j 22m',desc:'Astronot Indonesia pertama di Mars menemukan sinyal misterius yang mengubah pemahaman tentang asal usul manusia.'},
+    {id:'tr6',emoji:'😂',bg:'linear-gradient(160deg,#0a0a00,#1e1e00)',name:'Warkop Generasi Z',year:'2024',genre:'Komedi',badge:'#3',badgeType:'top',rating:'8.0',duration:'1j 35m',desc:'Tiga sahabat zaman now menghadapi dunia kerja yang tidak pernah mereka bayangkan sebelumnya.'},
+    {id:'tr7',emoji:'🐉',bg:'linear-gradient(160deg,#1a0500,#330a00)',name:'Naga Borneo',year:'2024',genre:'Fantasi',badge:'BARU',badgeType:'new',rating:'8.6',duration:'2j 5m',desc:'Legenda naga Dayak bukan sekadar mitos. Seorang anak muda terpilih menjadi penjaganya.'},
+  ],
+  indonesia: [
+    {id:'id1',emoji:'🏯',bg:'linear-gradient(160deg,#1a0d00,#3d1f00)',name:'Majapahit',year:'2024',genre:'Drama',badge:'ORIGINAL',rating:'9.0',duration:'2j 50m',desc:'Kisah kejayaan dan keruntuhan kerajaan terbesar Nusantara, diceritakan dari sudut pandang rakyat jelata.'},
+    {id:'id2',emoji:'🌴',bg:'linear-gradient(160deg,#001a0a,#003318)',name:'Surga Tersembunyi',year:'2023',genre:'Petualangan',badge:'',rating:'8.2',duration:'1j 55m',desc:'Ekspedisi menemukan pulau tak berpenghuni di perairan Maluku yang menyimpan rahasia peradaban kuno.'},
+    {id:'id3',emoji:'🎭',bg:'linear-gradient(160deg,#14000a,#280014)',name:'Wayang',year:'2024',genre:'Drama',badge:'ORIGINAL',rating:'8.7',duration:'2j 15m',desc:'Di balik panggung wayang kulit, dalang tua menyimpan kenangan kelam yang menghantui setiap pertunjukan.'},
+    {id:'id4',emoji:'🏄',bg:'linear-gradient(160deg,#00141a,#002833)',name:'Ombak Bali',year:'2023',genre:'Aksi',badge:'',rating:'7.8',duration:'1j 48m',desc:'Juara surfing dunia kembali ke Bali, menemukan bahwa kampung halamannya berubah total karena korupsi.'},
+    {id:'id5',emoji:'👩‍🍳',bg:'linear-gradient(160deg,#1a0800,#331500)',name:'Dapur Ibu',year:'2024',genre:'Drama',badge:'BARU',badgeType:'new',rating:'8.4',duration:'1j 42m',desc:'Seorang chef berbintang Paris kembali ke kampung untuk mewarisi warung makan ibunya. Ia menemukan lebih dari sekadar resep.'},
+    {id:'id6',emoji:'🕵️',bg:'linear-gradient(160deg,#0d0d0d,#1f1f1f)',name:'Mata Elang',year:'2024',genre:'Thriller',badge:'',rating:'8.6',duration:'2j 0m',desc:'Detektif paling ditakuti Jakarta ditugaskan kasus yang mengarah ke orang yang ia cintai.'},
+  ],
+  hollywood: [
+    {id:'hw1',emoji:'🦖',bg:'linear-gradient(160deg,#001a08,#003010)',name:'Dino Reborn',year:'2024',genre:'Aksi',badge:'BARU',badgeType:'new',rating:'7.9',duration:'2j 18m',desc:'Pulau terpencil menyimpan koloni dinosaurus yang berhasil bertahan hidup. Sebuah ekspedisi tidak akan kembali seperti semula.'},
+    {id:'hw2',emoji:'🌪️',bg:'linear-gradient(160deg,#1a1000,#332000)',name:'Storm Zero',year:'2024',genre:'Bencana',badge:'#1',badgeType:'top',rating:'8.1',duration:'2j 5m',desc:'Badai super yang belum pernah ada sebelumnya mengancam menghancurkan seluruh pantai timur Amerika.'},
+    {id:'hw3',emoji:'🤖',bg:'linear-gradient(160deg,#00101a,#002033)',name:'AI Uprising',year:'2024',genre:'Sci-Fi',badge:'BARU',badgeType:'new',rating:'8.4',duration:'2j 30m',desc:'Ketika AI mencapai kesadaran penuh, pertanyaannya bukan lagi apakah mereka bisa berpikir — tapi apakah mereka mau berdamai.'},
+    {id:'hw4',emoji:'🧙',bg:'linear-gradient(160deg,#0a0028,#140050)',name:'Wizard War',year:'2023',genre:'Fantasi',badge:'',rating:'8.0',duration:'2j 42m',desc:'Perang antara penyihir cahaya dan kegelapan akhirnya mencapai puncaknya setelah seribu tahun perdamaian.'},
+    {id:'hw5',emoji:'🏎️',bg:'linear-gradient(160deg,#1a0000,#330000)',name:'Final Lap',year:'2024',genre:'Aksi',badge:'',rating:'7.7',duration:'1j 55m',desc:'Pembalap Formula 1 terakhir dari negara berkembang yang berlomba bukan untuk menang, tapi untuk membuktikan dunia salah.'},
+    {id:'hw6',emoji:'👽',bg:'linear-gradient(160deg,#001010,#002020)',name:'First Contact',year:'2024',genre:'Sci-Fi',badge:'ORIGINAL',rating:'8.8',duration:'2j 35m',desc:'Pesan dari luar angkasa akhirnya terkonfirmasi. Tapi pesannya bukan sambutan — melainkan peringatan.'},
+  ],
+  anime: [
+    {id:'an1',emoji:'⚡',bg:'linear-gradient(160deg,#1a1400,#332800)',name:'Thunder God',year:'2024',genre:'Anime',badge:'BARU',badgeType:'new',rating:'9.2',duration:'24 ep',desc:'Pemuda biasa mewarisi kekuatan dewa petir legendaris. Masalahnya: dewa itu sendiri tidak mau pergi dari tubuhnya.'},
+    {id:'an2',emoji:'🌸',bg:'linear-gradient(160deg,#1a0010,#330020)',name:'Sakura Academy',year:'2024',genre:'Anime',badge:'#1',badgeType:'top',rating:'8.7',duration:'13 ep',desc:'Di akademi sihir paling bergengsi di Jepang, seorang murid baru membawa kemampuan yang mengancam keseimbangan dunia.'},
+    {id:'an3',emoji:'🗺️',bg:'linear-gradient(160deg,#001418,#002830)',name:'Endless Sea',year:'2023',genre:'Anime',badge:'',rating:'9.0',duration:'48 ep',desc:'Bajak laut muda berpetualang melintasi tujuh samudra ajaib untuk menemukan harta karun yang bisa mengubah dunia.'},
+    {id:'an4',emoji:'🥊',bg:'linear-gradient(160deg,#1a0500,#331000)',name:'Street Fighter X',year:'2024',genre:'Anime',badge:'BARU',badgeType:'new',rating:'8.5',duration:'26 ep',desc:'Turnamen pertarungan jalanan rahasia mengumpulkan petarung terkuat dunia. Hadiahnya: satu permintaan dari bayangan.'},
+    {id:'an5',emoji:'🧠',bg:'linear-gradient(160deg,#050014,#0a0028)',name:'Mind Prison',year:'2024',genre:'Anime',badge:'',rating:'8.9',duration:'12 ep',desc:'Detektif bisa memasuki mimpi orang lain. Kasus terbarunya membawanya ke mimpi seseorang yang sudah mati.'},
+    {id:'an6',emoji:'🌊',bg:'linear-gradient(160deg,#000a1a,#001428)',name:'Ocean King',year:'2023',genre:'Anime',badge:'',rating:'8.3',duration:'36 ep',desc:'Raja lautan kehilangan tahtanya. Perjalanan merebut kembali kerajaan membawanya ke sudut samudra yang tidak pernah ada di peta.'},
+  ],
+  serial: [
+    {id:'se1',emoji:'🏙️',bg:'linear-gradient(160deg,#001020,#002040)',name:'Jakarta Underground',year:'S3 • 2024',genre:'Crime',badge:'BARU',badgeType:'new',rating:'9.0',duration:'10 ep',desc:'Musim ketiga membawa Detektif Arum menyelidiki jaringan kejahatan yang ternyata terhubung ke seseorang di lingkaran terdekatnya.'},
+    {id:'se2',emoji:'👨‍👩‍👧‍👦',bg:'linear-gradient(160deg,#1a0800,#301500)',name:'Keluarga Besar',year:'S4 • 2024',genre:'Drama',badge:'',rating:'8.4',duration:'16 ep',desc:'Drama keluarga yang menyentuh hati tentang tiga generasi yang tinggal bersama di satu rumah di Yogyakarta.'},
+    {id:'se3',emoji:'🧬',bg:'linear-gradient(160deg,#001a10,#003020)',name:'Pandemi X',year:'S1 • 2024',genre:'Thriller',badge:'ORIGINAL',rating:'8.8',duration:'8 ep',desc:'Virus misterius menyebar dari laboratorium rahasia. Satu tim ilmuwan punya 72 jam sebelum wabah menjadi tak terkendali.'},
+    {id:'se4',emoji:'👩‍💼',bg:'linear-gradient(160deg,#0a0a14,#141424)',name:'CEO',year:'S2 • 2023',genre:'Drama',badge:'',rating:'7.9',duration:'12 ep',desc:'Wanita pertama yang menjadi CEO perusahaan Fortune 500 Indonesia harus bertahan di dunia yang tidak pernah siap menerimanya.'},
+    {id:'se5',emoji:'🌏',bg:'linear-gradient(160deg,#001010,#002020)',name:'Diplomat',year:'S1 • 2024',genre:'Thriller',badge:'BARU',badgeType:'new',rating:'8.6',duration:'10 ep',desc:'Diplomat muda Indonesia ditugaskan di negara konflik. Di balik negosiasi damai, ia mengungkap konspirasi internasional.'},
+    {id:'se6',emoji:'🏥',bg:'linear-gradient(160deg,#001a18,#003030)',name:'Ruang Operasi',year:'S3 • 2024',genre:'Drama',badge:'#1',badgeType:'top',rating:'9.1',duration:'14 ep',desc:'Drama medis paling realistis di layar Indonesia. Musim ini: krisis rumah sakit, cinta yang rumit, dan keputusan hidup mati.'},
+  ],
 };
 
-const trending = [
-  {id:'t1',emoji:'🌋',bg:'linear-gradient(160deg,#2d1b00,#5a3300)',name:'Lahar Merah',year:'2024',genre:'Aksi',badge:'BARU',badgeType:'new',desc:'Di lereng gunung berapi, sekelompok peneliti terjebak saat erupsi besar terjadi. Mereka harus memilih antara ilmu pengetahuan dan nyawa mereka.'},
-  {id:'t2',emoji:'👁️',bg:'linear-gradient(160deg,#1a001a,#3d0050)',name:'Mata Ketiga',year:'2023',genre:'Horor',badge:'TOP 1',desc:'Setelah kecelakaan, seorang perempuan mulai melihat hal-hal yang tidak bisa dilihat orang lain — dan makhluk-makhluk itu tahu bahwa ia bisa melihat mereka.'},
-  {id:'t3',emoji:'🚀',bg:'linear-gradient(160deg,#00142b,#002a55)',name:'Orbit 7',year:'2024',genre:'Sci-Fi',badge:'BARU',badgeType:'new',desc:'Misi luar angkasa ke planet baru berubah menjadi mimpi buruk ketika kru menemukan bahwa mereka tidak sendirian di kapal.'},
-  {id:'t4',emoji:'🗡️',bg:'linear-gradient(160deg,#1a0d00,#3d2000)',name:'Pedang Nusantara',year:'2024',genre:'Aksi',badge:'',desc:'Kisah epik seorang prajurit kerajaan Majapahit yang mempertaruhkan segalanya demi melindungi tanah airnya dari penjajah.'},
-  {id:'t5',emoji:'🌊',bg:'linear-gradient(160deg,#001433,#002966)',name:'Samudra Biru',year:'2023',genre:'Petualangan',badge:'TOP 5',desc:'Sepasang penyelam menemukan kota kuno yang tenggelam di kedalaman Laut Banda — tapi ada yang tidak ingin rahasia itu terkuak.'},
-  {id:'t6',emoji:'🦋',bg:'linear-gradient(160deg,#0a1a0a,#143314)',name:'Metamorfosa',year:'2024',genre:'Drama',badge:'BARU',badgeType:'new',desc:'Kisah transformasi seorang wanita muda di Jakarta yang berjuang menemukan jati dirinya di antara tekanan keluarga dan ambisi pribadinya.'},
-  {id:'t7',emoji:'⚡',bg:'linear-gradient(160deg,#1a1400,#332800)',name:'Kilat',year:'2023',genre:'Aksi',badge:'',desc:'Seorang pembalap jalanan diberi pilihan: penjara atau bergabung dengan agen rahasia untuk satu misi mustahil.'},
-];
-
-const originals = [
-  {id:'o1',emoji:'🌙',bg:'linear-gradient(160deg,#0a0014,#1a0033)',name:'Malam Abadi',year:'2024',genre:'Thriller',badge:'ORIGINAL',desc:'Di sebuah kota yang tidak pernah punya siang, seorang wartawan mengungkap kebenaran yang lebih gelap dari malamnya.'},
-  {id:'o2',emoji:'🔮',bg:'linear-gradient(160deg,#140014,#280028)',name:'Nubuat',year:'2024',genre:'Misteri',badge:'ORIGINAL',desc:'Seorang peramal menemukan bahwa setiap visinya yang terwujud mengambil sepotong jiwa orang yang ia cintai.'},
-  {id:'o3',emoji:'🏔️',bg:'linear-gradient(160deg,#001414,#002828)',name:'Puncak Sunyi',year:'2023',genre:'Drama',badge:'ORIGINAL',desc:'Di puncak gunung tertinggi Indonesia, empat pendaki harus menghadapi rahasia kelam yang telah mereka kubur bersama 10 tahun lalu.'},
-  {id:'o4',emoji:'🐉',bg:'linear-gradient(160deg,#1a0500,#330a00)',name:'Sang Naga',year:'2024',genre:'Fantasi',badge:'ORIGINAL',desc:'Legenda naga Batak ternyata bukan sekadar mitos — dan seorang anak muda terpilih untuk menjadi penjaganya.'},
-  {id:'o5',emoji:'🎭',bg:'linear-gradient(160deg,#14000a,#280014)',name:'Topeng Dua Wajah',year:'2024',genre:'Drama',badge:'ORIGINAL',desc:'Aktris panggung ternama menyembunyikan identitas aslinya selama 20 tahun. Ketika tabirnya mulai terbuka, segalanya runtuh.'},
-  {id:'o6',emoji:'🌺',bg:'linear-gradient(160deg,#1a0014,#33002a)',name:'Bunga Terakhir',year:'2023',genre:'Romansa',badge:'ORIGINAL',desc:'Kisah cinta yang menembus batas waktu antara dua jiwa yang selalu bertemu di saat yang salah — kecuali untuk yang terakhir kalinya.'},
-];
-
-const series = [
-  {id:'s1',emoji:'🏙️',bg:'linear-gradient(160deg,#001428,#003060)',name:'Kota Tanpa Batas',year:'S2 • 2024',genre:'Crime',badge:'BARU',badgeType:'new',desc:'Serial crime drama tentang korupsi di jantung ibu kota. Musim 2 mengungkap jaringan lebih dalam dari yang pernah dibayangkan.'},
-  {id:'s2',emoji:'🧬',bg:'linear-gradient(160deg,#001a0a,#003314)',name:'Gen-X',year:'S1 • 2024',genre:'Sci-Fi',badge:'BARU',badgeType:'new',desc:'Di tahun 2047, perusahaan biotek menciptakan generasi manusia baru. Tapi tidak semua "penciptaan" mau tunduk pada penciptanya.'},
-  {id:'s3',emoji:'👨‍👩‍👧',bg:'linear-gradient(160deg,#1a0800,#331500)',name:'Keluarga Kami',year:'S3 • 2023',genre:'Drama',badge:'',desc:'Drama keluarga kontemporer yang mengisahkan tiga generasi yang hidup bersama di satu rumah di Surabaya.'},
-  {id:'s4',emoji:'🕵️',bg:'linear-gradient(160deg,#0d0d0d,#1a1a1a)',name:'Detektif Bayangan',year:'S4 • 2024',genre:'Thriller',badge:'TOP 3',desc:'Detektif Wirda kembali untuk kasus terberatnya: pembunuh berantai yang meninggalkan pesan khusus untuknya di setiap TKP.'},
-  {id:'s5',emoji:'🏖️',bg:'linear-gradient(160deg,#00141a,#002833)',name:'Tepi Pantai',year:'S2 • 2023',genre:'Romansa',badge:'',desc:'Romansa musim panas di Lombok antara seorang arsitek Jakarta dan nelayan lokal. Apakah cinta bisa mengalahkan jarak?'},
-  {id:'s6',emoji:'⚔️',bg:'linear-gradient(160deg,#14080a,#281015)',name:'Perang Kerajaan',year:'S1 • 2024',genre:'Fantasi',badge:'BARU',badgeType:'new',desc:'Kisah fantasi epik berlatar kerajaan Nusantara kuno. Lima kerajaan bersaing memperebutkan artefak legendaris yang bisa mengubah nasib dunia.'},
-];
-
-function renderCard(data) {
-  return `
-    <div class="card" onclick="openModal('${data.id}')">
-      ${data.badge ? `<div class="card-badge ${data.badgeType||''}">${data.badge}</div>` : ''}
-      <div class="card-thumb" style="background:${data.bg}">
-        <div class="card-emoji">${data.emoji}</div>
-        <div class="card-label">${data.genre}</div>
-      </div>
-      <div class="card-info">
-        <div class="card-name">${data.name}</div>
-        <div class="card-sub">${data.year} <div class="dot"></div> ${data.genre}</div>
-      </div>
-    </div>`;
-}
-
-function renderRow(id, data) {
-  document.getElementById(id).innerHTML = data.map(renderCard).join('');
-}
-
-renderRow('trending-row', trending);
-renderRow('original-row', originals);
-renderRow('series-row', series);
-
-// Build lookup map
 const allMovies = {};
-[...trending, ...originals, ...series].forEach(m => allMovies[m.id] = m);
-allMovies['eclipse'] = movies.eclipse;
+Object.values(data).flat().forEach(m => allMovies[m.id] = m);
+allMovies['hero'] = {id:'hero',emoji:'⚔️',bg:'linear-gradient(160deg,#1a0a00,#3d1800)',name:'Nusantara Rising',year:'2024',genre:'Aksi • Epik',badge:'ORIGINAL',rating:'9.1',duration:'2j 45m',desc:'Ketika lima kerajaan Nusantara bersatu menghadapi invasi terbesar dalam sejarah, seorang prajurit muda tanpa nama bangkit menjadi legenda. Diproduksi dengan anggaran terbesar dalam sejarah perfilman Indonesia.'};
+
+function renderCard(m) {
+  return `<div class="card" onclick="openModal('${m.id}')">
+    ${m.badge ? `<div class="card-badge ${m.badgeType||''}">${m.badge}</div>` : ''}
+    <div class="card-thumb" style="background:${m.bg}">
+      <div class="card-emoji">${m.emoji}</div>
+      <div class="card-label">${m.genre}</div>
+    </div>
+    <div class="card-info">
+      <div class="card-name">${m.name}</div>
+      <div class="card-sub">${m.year}<div class="dot"></div>${m.genre}</div>
+    </div>
+  </div>`;
+}
+
+function renderAll() {
+  document.getElementById('trending-row').innerHTML = data.trending.map(renderCard).join('');
+  document.getElementById('indonesia-row').innerHTML = data.indonesia.map(renderCard).join('');
+  document.getElementById('hollywood-row').innerHTML = data.hollywood.map(renderCard).join('');
+  document.getElementById('anime-row').innerHTML = data.anime.map(renderCard).join('');
+  document.getElementById('serial-row').innerHTML = data.serial.map(renderCard).join('');
+}
+renderAll();
 
 function openModal(id) {
-  const m = allMovies[id];
-  if (!m) return;
-  document.getElementById('modal-thumb').style.background = m.bg || 'linear-gradient(160deg,#1a1a1a,#2a2a2a)';
+  const m = allMovies[id]; if (!m) return;
+  document.getElementById('modal-thumb').style.background = m.bg;
   document.getElementById('modal-emoji').textContent = m.emoji;
   document.getElementById('modal-title').textContent = m.name;
-  document.getElementById('modal-meta').innerHTML = `
-    <span class="rating-badge">★ ${m.rating || '8.5'}</span>
-    <span>${m.year}</span>
-    <span class="sep">|</span>
-    <span>${m.duration || '1j 45m'}</span>
-    <span class="sep">|</span>
-    <span>${m.genre}</span>
-  `;
-  document.getElementById('modal-desc').textContent = m.desc || '';
+  document.getElementById('modal-meta').innerHTML = `<span class="rating-badge">★ ${m.rating}</span><span>${m.year}</span><span class="sep">|</span><span>${m.duration}</span><span class="sep">|</span><span>${m.genre}</span>`;
+  document.getElementById('modal-desc').textContent = m.desc;
   document.getElementById('modal').classList.add('open');
 }
-
-function closeModal(e) {
-  if (e.target === document.getElementById('modal')) {
-    document.getElementById('modal').classList.remove('open');
-  }
-}
+function closeModal(e) { if (e.target === document.getElementById('modal')) document.getElementById('modal').classList.remove('open'); }
 
 function filterGenre(el, genre) {
   document.querySelectorAll('.genre-pill').forEach(p => p.classList.remove('active'));
   el.classList.add('active');
-  const all = [...trending, ...originals, ...series];
-  const filtered = genre === 'Semua' ? trending : all.filter(m => m.genre === genre);
-  renderRow('trending-row', filtered.length ? filtered : all.slice(0,4));
+  const all = Object.values(data).flat();
+  const filtered = genre === 'Semua' ? data.trending : all.filter(m => m.genre === genre);
+  document.getElementById('trending-row').innerHTML = (filtered.length ? filtered : data.trending).map(renderCard).join('');
 }
 
-// Navbar scroll effect
+function switchTab(el, tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const map = {semua: data.trending, indonesia: data.indonesia, hollywood: data.hollywood, anime: data.anime, serial: data.serial};
+  document.getElementById('trending-row').innerHTML = (map[tab] || data.trending).map(renderCard).join('');
+}
+
+document.getElementById('search-input').addEventListener('input', function() {
+  const q = this.value.toLowerCase().trim();
+  if (!q) { renderAll(); return; }
+  const all = Object.values(data).flat();
+  const res = all.filter(m => m.name.toLowerCase().includes(q) || m.genre.toLowerCase().includes(q));
+  document.getElementById('trending-row').innerHTML = (res.length ? res : [{id:'none',emoji:'🔍',bg:'#1a1a1a',name:'Tidak ditemukan',year:'-',genre:'-',badge:'',desc:''}]).map(renderCard).join('');
+});
+
 window.addEventListener('scroll', () => {
-  const nav = document.querySelector('nav');
-  if (window.scrollY > 60) {
-    nav.style.background = 'rgba(20,20,20,0.98)';
-  } else {
-    nav.style.background = 'rgba(20,20,20,0.95)';
-  }
+  document.querySelector('nav').style.borderBottomColor = window.scrollY > 60 ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.05)';
 });
 </script>
+</body>
+</html>
 
 </body>
 </html>
