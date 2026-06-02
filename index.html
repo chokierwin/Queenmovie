@@ -466,26 +466,33 @@ async function loadRow(rowId, endpoint, type='movie'){
   }catch(e){row.innerHTML=renderError(rowId,endpoint,type);}
 }
 
-// ── LOAD MORE (Infinite-style) ────────────────────────────
-let mainPage=1, mainEndpoint='/trending/movie/week?', mainType='movie', mainLoading=false;
+// ── LOAD MORE ────────────────────────────────────────────
+let mainPage=1, mainEndpoint='/trending/movie/week', mainType='movie', mainLoading=false;
 async function loadMoreMain(){
   if(mainLoading) return;
   mainLoading=true;
   const btn=document.getElementById('main-load-more');
-  btn.textContent='Memuat...'; btn.disabled=true;
+  btn.textContent='⏳ Memuat...'; btn.disabled=true;
   try{
     mainPage++;
-    const data=await apiFetch(`${mainEndpoint}&page=${mainPage}`);
-    const results=(data.results||[]).slice(0,12);
+    const url=`${PROXY}${mainEndpoint}?api_key=${API_KEY}&language=${LANG}&page=${mainPage}`;
+    const res=await fetch(url);
+    const data=await res.json();
+    const results=data.results||[];
     const row=document.getElementById('main-row');
-    results.forEach(m=>{
+    results.slice(0,12).forEach(m=>{
       const div=document.createElement('div');
       div.innerHTML=renderCard(m,mainType);
       row.appendChild(div.firstChild);
     });
-    if(mainPage >= (data.total_pages||1)) btn.style.display='none';
-  }catch(e){}
-  btn.textContent='Muat Lebih Banyak ↓'; btn.disabled=false;
+    if(mainPage>=(data.total_pages||1)||results.length===0){
+      btn.style.display='none';
+    } else {
+      btn.textContent='Muat Lebih Banyak ↓'; btn.disabled=false;
+    }
+  }catch(e){
+    btn.textContent='❌ Gagal — Coba Lagi'; btn.disabled=false;
+  }
   mainLoading=false;
 }
 
@@ -603,7 +610,7 @@ function closeModalClick(e){ if(e.target===document.getElementById('modal')) clo
 async function switchTab(el,type,mediaType){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
-  mainEndpoint=type==='trending'?`/trending/${mediaType}/week?`:`/${mediaType}/${type}?`;
+  mainEndpoint=type==='trending'?`/trending/${mediaType}/week`:`/${mediaType}/${type}`;
   mainType=mediaType; mainPage=1;
   const titles={trending:'🔥 <span>Trending</span> Minggu Ini',popular:'🎬 Film <span>Populer</span>',top_rated:'⭐ Rating <span>Tertinggi</span>',upcoming:'🗓️ <span>Segera</span> Tayang'};
   document.getElementById('main-section-title').innerHTML=titles[type]||type;
