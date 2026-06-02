@@ -287,7 +287,7 @@
   </div>
   <div class="row" id="main-row"></div>
   <div class="load-more-wrap">
-    <button class="btn-load-more" id="main-load-more">Muat Lebih Banyak ↓</button>
+    <button class="btn-load-more" id="main-load-more" onclick="loadMoreMain()">Muat Lebih Banyak ↓</button>
   </div>
 </div>
 
@@ -676,13 +676,15 @@ window.addEventListener('beforeinstallprompt',e=>{
   e.preventDefault(); deferredPrompt=e;
   setTimeout(()=>document.getElementById('pwa-banner').classList.add('show'),3000);
 });
-document.getElementById('pwa-install-btn').addEventListener('click',async()=>{
-  if(!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const{outcome}=await deferredPrompt.userChoice;
-  if(outcome==='accepted') document.getElementById('pwa-banner').classList.remove('show');
-  deferredPrompt=null;
-});
+try{
+  document.getElementById('pwa-install-btn').addEventListener('click',async()=>{
+    if(!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const{outcome}=await deferredPrompt.userChoice;
+    if(outcome==='accepted') document.getElementById('pwa-banner').classList.remove('show');
+    deferredPrompt=null;
+  });
+}catch(e){}
 
 // ── SERVICE WORKER ────────────────────────────────────────
 if('serviceWorker' in navigator){
@@ -690,23 +692,13 @@ if('serviceWorker' in navigator){
 }
 
 // ── INIT ──────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', function() {
-  // Load more button - use addEventListener to ensure it works
-  const loadMoreBtn = document.getElementById('main-load-more');
-  if(loadMoreBtn){
-    loadMoreBtn.addEventListener('click', function(){
-      console.log('Load more clicked, page:', mainPage+1);
-      loadMoreMain();
-    });
-  }
-
-  loadHero();
-  loadRow('main-row','/trending/movie/week?','movie');
-  loadRow('indonesia-row','/discover/movie?with_original_language=id&sort_by=popularity.desc&','movie');
-  loadRow('toprated-row','/movie/top_rated?','movie');
-  loadRow('tv-row','/tv/popular?','tv');
-  loadRow('upcoming-row','/movie/upcoming?','movie');
-});
+// Script is at bottom of body so DOM is already ready
+loadHero();
+loadRow('main-row','/trending/movie/week?','movie');
+loadRow('indonesia-row','/discover/movie?with_original_language=id&sort_by=popularity.desc&','movie');
+loadRow('toprated-row','/movie/top_rated?','movie');
+loadRow('tv-row','/tv/popular?','tv');
+loadRow('upcoming-row','/movie/upcoming?','movie');
 </script>
 </body>
 </html>
