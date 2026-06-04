@@ -12,6 +12,41 @@
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://chokierwin.github.io/Queenmovie/">
 
+  <!-- Structured Data: WebSite -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "FlixID",
+    "url": "https://chokierwin.github.io/Queenmovie/",
+    "description": "Temukan film trending, serial TV, dan anime terbaru. Cek di mana bisa nonton legal di Netflix, Disney+, Prime Video dan lainnya.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://chokierwin.github.io/Queenmovie/?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    },
+    "inLanguage": "id-ID"
+  }
+  </script>
+
+  <!-- Structured Data: Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "FlixID",
+    "url": "https://chokierwin.github.io/Queenmovie/",
+    "logo": "https://chokierwin.github.io/Queenmovie/icon-512.png",
+    "sameAs": [
+      "https://instagram.com/flixid",
+      "https://twitter.com/flixid"
+    ]
+  }
+  </script>
+
   <!-- Open Graph -->
   <meta property="og:title" content="FlixID — Nonton Film, Serial & Anime Terbaru">
   <meta property="og:description" content="Temukan trailer & platform streaming film favoritmu. Netflix, Disney+, Prime Video dan lainnya — semua di FlixID.">
@@ -106,9 +141,15 @@
     .section-title { font-size: 18px; font-weight: 600; }
     .section-title span { color: var(--red); }
     .see-all { font-size: 12px; color: var(--red); cursor: pointer; text-decoration: none; font-weight: 500; }
-    .row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; }
+    .row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; flex-wrap: nowrap; }
     .row::-webkit-scrollbar { height: 3px; }
     .row::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
+    .row.expanded { flex-wrap: wrap; overflow-x: visible; padding-bottom: 0; }
+    .row.expanded .card { flex: 0 0 calc(16.66% - 11px); }
+    @media(max-width:1200px){ .row.expanded .card { flex: 0 0 calc(20% - 10px); } }
+    @media(max-width:900px){ .row.expanded .card { flex: 0 0 calc(25% - 9px); } }
+    @media(max-width:600px){ .row.expanded .card { flex: 0 0 calc(33.33% - 8px); } }
+    @media(max-width:400px){ .row.expanded .card { flex: 0 0 calc(50% - 6px); } }
     .card { flex: 0 0 150px; border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform .28s, box-shadow .28s; position: relative; background: var(--card-bg); }
     .card:hover { transform: scale(1.07); box-shadow: 0 24px 50px rgba(0,0,0,0.8); z-index: 2; }
     .card-thumb { width: 100%; height: 220px; object-fit: cover; display: block; }
@@ -472,7 +513,6 @@ async function loadMoreMain(){
   if(mainLoading) return;
   mainLoading=true;
   const btn=document.getElementById('main-load-more');
-  const origText=btn.textContent;
   btn.textContent='⏳ Memuat...'; btn.disabled=true;
   try{
     mainPage++;
@@ -488,6 +528,8 @@ async function loadMoreMain(){
     const results=data.results||[];
     if(results.length===0) throw new Error('no results');
     const row=document.getElementById('main-row');
+    // Switch to grid/wrap layout so new films appear BELOW
+    row.classList.add('expanded');
     results.slice(0,12).forEach(m=>{
       const div=document.createElement('div');
       div.innerHTML=renderCard(m,mainType);
@@ -498,8 +540,10 @@ async function loadMoreMain(){
     } else {
       btn.textContent='Muat Lebih Banyak ↓'; btn.disabled=false;
     }
+    // Smooth scroll to new content
+    btn.scrollIntoView({behavior:'smooth', block:'nearest'});
   }catch(e){
-    mainPage--; // rollback page on error
+    mainPage--;
     btn.textContent='❌ Gagal — Coba Lagi'; btn.disabled=false;
   }
   mainLoading=false;
@@ -521,8 +565,39 @@ async function loadHero(){
     document.getElementById('hero-desc').textContent=m.overview||'Tidak ada deskripsi.';
     document.getElementById('hero-trailer-btn').onclick=()=>openModal(m.id,'movie',true);
     document.getElementById('hero-info-btn').onclick=()=>openModal(m.id,'movie',false);
-    // Update OG meta dynamically
-    document.querySelector('meta[property="og:title"]').content=getTitle(m)+' — FlixID';
+    // Update SEO meta dynamically based on trending film
+    const heroTitle = getTitle(m);
+    const heroDesc = m.overview ? m.overview.substring(0,160) : '';
+    document.title = heroTitle + ' — FlixID | Nonton Film & Serial';
+    document.querySelector('meta[name="description"]').content = heroDesc || document.querySelector('meta[name="description"]').content;
+    document.querySelector('meta[property="og:title"]').content = heroTitle + ' — FlixID';
+    document.querySelector('meta[property="og:description"]').content = heroDesc;
+    if(m.backdrop_path){
+      document.querySelector('meta[property="og:image"]').content = '${IMG}w780'+m.backdrop_path;
+    }
+    // Add structured data for current trending movie
+    const movieSchema = {
+      "@context": "https://schema.org",
+      "@type": "Movie",
+      "name": heroTitle,
+      "description": m.overview || '',
+      "image": m.poster_path ? '${IMG}w500'+m.poster_path : '',
+      "datePublished": m.release_date || '',
+      "aggregateRating": m.vote_average ? {
+        "@type": "AggregateRating",
+        "ratingValue": m.vote_average.toFixed(1),
+        "ratingCount": m.vote_count || 0,
+        "bestRating": "10",
+        "worstRating": "0"
+      } : undefined
+    };
+    const existingSchema = document.getElementById('movie-schema');
+    if(existingSchema) existingSchema.remove();
+    const schemaEl = document.createElement('script');
+    schemaEl.type = 'application/ld+json';
+    schemaEl.id = 'movie-schema';
+    schemaEl.textContent = JSON.stringify(movieSchema);
+    document.head.appendChild(schemaEl);
   }catch(e){}
 }
 
@@ -621,6 +696,10 @@ async function switchTab(el,type,mediaType){
   el.classList.add('active');
   mainPage=1;
   mainType=mediaType;
+  // Reset expanded layout when switching tabs
+  const mainRow=document.getElementById('main-row');
+  if(mainRow) mainRow.classList.remove('expanded');
+  document.getElementById('main-load-more').style.display='block';
   if(type==='trending'){
     mainIsTrending=true;
     mainEndpoint='/trending/'+mediaType+'/week?';
