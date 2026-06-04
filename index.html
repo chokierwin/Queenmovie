@@ -508,45 +508,75 @@ async function loadRow(rowId, endpoint, type='movie'){
 }
 
 // ── LOAD MORE ────────────────────────────────────────────
-let mainPage=1, mainEndpoint='popular', mainType='movie', mainIsTrending=true, mainLoading=false;
+let mainPage=1, mainEndpoint='/trending/movie/week?', mainType='movie', mainIsTrending=true, mainLoading=false;
 async function loadMoreMain(){
   if(mainLoading) return;
   mainLoading=true;
-  const btn=document.getElementById('main-load-more');
-  btn.textContent='⏳ Memuat...'; btn.disabled=true;
-  try{
+
+  const btn = document.getElementById('main-load-more');
+  const row = document.getElementById('main-row');
+  btn.textContent = '⏳ Memuat...';
+  btn.disabled = true;
+
+  try {
     mainPage++;
+
+    // Build URL correctly
     let url;
     if(mainIsTrending){
-      url=`${PROXY}/trending/${mainType}/week?api_key=${API_KEY}&language=${LANG}&page=${mainPage}`;
+      url = PROXY + '/trending/' + mainType + '/week?api_key=' + API_KEY + '&language=' + LANG + '&page=' + mainPage;
     } else {
-      url=`${PROXY}${mainEndpoint}api_key=${API_KEY}&language=${LANG}&page=${mainPage}`;
+      // mainEndpoint = '/movie/popular?' or '/tv/popular?' etc
+      url = PROXY + mainEndpoint + 'api_key=' + API_KEY + '&language=' + LANG + '&page=' + mainPage;
     }
-    const res=await fetch(url);
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const data=await res.json();
-    const results=data.results||[];
-    if(results.length===0) throw new Error('no results');
-    const row=document.getElementById('main-row');
-    // Switch to grid/wrap layout so new films appear BELOW
+
+    console.log('Fetching:', url);
+
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const results = data.results || [];
+
+    console.log('Got results:', results.length);
+
+    if(results.length === 0){
+      btn.style.display = 'none';
+      mainLoading = false;
+      return;
+    }
+
+    // Switch row to wrap grid layout
     row.classList.add('expanded');
-    results.slice(0,12).forEach(m=>{
-      const div=document.createElement('div');
-      div.innerHTML=renderCard(m,mainType);
-      row.appendChild(div.firstChild);
+
+    // Append new cards
+    results.forEach(function(m){
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = renderCard(m, mainType);
+      const card = wrapper.firstChild;
+      if(card) row.appendChild(card);
     });
-    if(mainPage>=(data.total_pages||1)){
-      btn.style.display='none';
+
+    // Show/hide button
+    if(mainPage >= (data.total_pages || 1)){
+      btn.style.display = 'none';
     } else {
-      btn.textContent='Muat Lebih Banyak ↓'; btn.disabled=false;
+      btn.textContent = 'Muat Lebih Banyak ↓';
+      btn.disabled = false;
     }
-    // Smooth scroll to new content
-    btn.scrollIntoView({behavior:'smooth', block:'nearest'});
-  }catch(e){
+
+    // Scroll to button smoothly
+    setTimeout(function(){
+      btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 300);
+
+  } catch(e) {
+    console.error('Load more error:', e);
     mainPage--;
-    btn.textContent='❌ Gagal — Coba Lagi'; btn.disabled=false;
+    btn.textContent = '❌ Gagal, Coba Lagi';
+    btn.disabled = false;
   }
-  mainLoading=false;
+
+  mainLoading = false;
 }
 
 // ── HERO ─────────────────────────────────────────────────
@@ -701,11 +731,11 @@ async function switchTab(el,type,mediaType){
   if(mainRow) mainRow.classList.remove('expanded');
   document.getElementById('main-load-more').style.display='block';
   if(type==='trending'){
-    mainIsTrending=true;
-    mainEndpoint='/trending/'+mediaType+'/week?';
+    mainIsTrending = true;
+    mainEndpoint = '/trending/' + mediaType + '/week?';
   } else {
-    mainIsTrending=false;
-    mainEndpoint='/'+mediaType+'/'+type+'?';
+    mainIsTrending = false;
+    mainEndpoint = '/' + mediaType + '/' + type + '?';
   }
   const titles={trending:'🔥 <span>Trending</span> Minggu Ini',popular:'🎬 Film <span>Populer</span>',top_rated:'⭐ Rating <span>Tertinggi</span>',upcoming:'🗓️ <span>Segera</span> Tayang'};
   document.getElementById('main-section-title').innerHTML=titles[type]||type;
