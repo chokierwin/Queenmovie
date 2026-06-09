@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Performance hints -->
+  <meta name="format-detection" content="telephone=no">
   <title>FlixID — Nonton Film, Serial & Anime Terbaru</title>
 
   <!-- SEO Meta -->
@@ -67,11 +70,22 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="FlixID">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- DNS prefetch for faster connections -->
+  <link rel="dns-prefetch" href="https://api.themoviedb.org">
+  <link rel="dns-prefetch" href="https://image.tmdb.org">
+  <link rel="dns-prefetch" href="https://www.youtube.com">
+  <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
+  <!-- Preconnect to font origins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://image.tmdb.org" crossorigin>
+  <link rel="preconnect" href="https://api.themoviedb.org" crossorigin>
+  <!-- Load fonts async to prevent render blocking -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet"></noscript>
 
   <!-- Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8642572709653420" crossorigin="anonymous"></script>
+  <script async defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8642572709653420" crossorigin="anonymous"></script>
 
   <!-- Google Analytics -->
   <!-- Google tag (gtag.js) -->
@@ -280,6 +294,7 @@
 </head>
 <body>
 
+<a href="#main-content" style="position:absolute;top:-40px;left:0;background:var(--red);color:#fff;padding:8px 16px;z-index:999;border-radius:0 0 4px 0;font-size:13px;text-decoration:none" onfocus="this.style.top='0'">Lewati ke konten</a>
 <nav>
   <a href="index.html" class="logo"><span>Flix</span><span>ID</span></a>
   <div class="nav-links">
@@ -300,7 +315,7 @@
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-bg-img" id="hero-bg"></div>
+  <div class="hero-bg-img" id="hero-bg"><img id="hero-bg-img" src="" alt="Hero backdrop" fetchpriority="high" decoding="async" style="width:100%;height:100%;object-fit:cover;display:none"></div>
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <div class="hero-tag">🔴 &nbsp; Trending Minggu Ini</div>
@@ -919,12 +934,26 @@ window.addEventListener('scroll', function(){
 
 // ── INIT ──────────────────────────────────────────────────
 // Script is at bottom of body so DOM is already ready
+// Load critical content first
 loadHero();
 loadRow('main-row','/trending/movie/week?','movie');
-loadRow('indonesia-row','/discover/movie?with_original_language=id&sort_by=popularity.desc&','movie');
-loadRow('toprated-row','/movie/top_rated?','movie');
-loadRow('tv-row','/tv/popular?','tv');
-loadRow('upcoming-row','/movie/upcoming?','movie');
+
+// Defer non-critical rows to after page load
+if('requestIdleCallback' in window){
+  requestIdleCallback(() => {
+    loadRow('indonesia-row','/discover/movie?with_original_language=id&sort_by=popularity.desc&','movie');
+    loadRow('toprated-row','/movie/top_rated?','movie');
+    loadRow('tv-row','/tv/popular?','tv');
+    loadRow('upcoming-row','/movie/upcoming?','movie');
+  });
+} else {
+  setTimeout(() => {
+    loadRow('indonesia-row','/discover/movie?with_original_language=id&sort_by=popularity.desc&','movie');
+    loadRow('toprated-row','/movie/top_rated?','movie');
+    loadRow('tv-row','/tv/popular?','tv');
+    loadRow('upcoming-row','/movie/upcoming?','movie');
+  }, 1500);
+}
 </script>
 </body>
 </html>
