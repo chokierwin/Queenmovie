@@ -309,7 +309,7 @@
       <span class="search-icon">🔍</span>
       <input type="text" id="search-input" placeholder="Cari film, serial..." autocomplete="off">
     </div>
-    <div class="avatar">ID</div>
+    <div class="avatar" id="nav-avatar" onclick="handleAvatarClick()" title="Login / Profil">ID</div>
   </div>
 </nav>
 
@@ -547,6 +547,9 @@
       <div class="modal-desc" id="modal-desc"></div>
       <div class="watch-full-section" id="watch-full-section"></div>
       <div class="modal-actions">
+        <button class="btn-play" id="watchlist-btn" onclick="toggleWatchlist()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);display:none">
+          ♡ Simpan
+        </button>
         <button class="btn-info" onclick="closeModal()">✕ Tutup</button>
       </div>
     </div>
@@ -966,6 +969,84 @@ if('requestIdleCallback' in window){
     loadRow('upcoming-row','/movie/upcoming?','movie');
   }, 1500);
 }
+</script>
+<!-- Firebase Auth for navbar & watchlist -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+  import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+  import { getFirestore, doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAz5RCR0F71MtHnZ-daPLDzSxAmD2BhBYk",
+    authDomain: "calm-history-468711-e6.firebaseapp.com",
+    projectId: "calm-history-468711-e6",
+    storageBucket: "calm-history-468711-e6.firebasestorage.app",
+    messagingSenderId: "382975857631",
+    appId: "1:382975857631:web:1fe6482ea61445ecc52a6a"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  let currentUser = null;
+  let currentMovieId = null;
+  let userWatchlist = [];
+
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
+    const avatar = document.getElementById('nav-avatar');
+    if(user){
+      if(user.photoURL){
+        avatar.innerHTML = `<img src="${user.photoURL}" style="width:100%;height:100%;object-fit:cover;border-radius:6px" alt="avatar">`;
+      } else {
+        avatar.textContent = (user.displayName||user.email||'U')[0].toUpperCase();
+      }
+      avatar.title = user.displayName || user.email;
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if(userDoc.exists()) userWatchlist = userDoc.data().watchlist || [];
+      } catch(e){}
+    } else {
+      avatar.textContent = 'ID';
+      avatar.title = 'Login / Daftar';
+    }
+  });
+
+  window.toggleWatchlist = async () => {
+    if(!currentUser){ window.location.href='auth.html'; return; }
+    if(!currentMovieId) return;
+    const btn = document.getElementById('watchlist-btn');
+    const isInList = userWatchlist.includes(currentMovieId);
+    try {
+      const userRef = doc(db,'users',currentUser.uid);
+      if(isInList){
+        await updateDoc(userRef,{watchlist: arrayRemove(currentMovieId)});
+        userWatchlist = userWatchlist.filter(id=>id!==currentMovieId);
+        btn.innerHTML='♡ Simpan'; btn.style.color='#fff';
+        btn.style.background='rgba(255,255,255,0.1)';
+      } else {
+        await updateDoc(userRef,{watchlist: arrayUnion(currentMovieId)});
+        userWatchlist.push(currentMovieId);
+        btn.innerHTML='♥ Tersimpan'; btn.style.color='var(--red)';
+        btn.style.background='rgba(229,9,20,0.15)';
+      }
+    } catch(e){ console.error(e); }
+  };
+
+  // Patch openModal to show watchlist button
+  const _openModal = window.openModal;
+  window.openModal = async (id, type, play) => {
+    currentMovieId = id+'_'+type;
+    await _openModal(id, type, play);
+    const btn = document.getElementById('watchlist-btn');
+    if(btn){
+      btn.style.display = 'flex';
+      const inList = userWatchlist.includes(currentMovieId);
+      btn.innerHTML = inList ? '♥ Tersimpan' : '♡ Simpan';
+      btn.style.color = inList ? 'var(--red)' : '#fff';
+      btn.style.background = inList ? 'rgba(229,9,20,0.15)' : 'rgba(255,255,255,0.1)';
+    }
+  };
 </script>
 </body>
 </html>
