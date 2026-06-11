@@ -1,0 +1,49 @@
+{
+  "name": "FlixID — Nonton Film, Serial & Anime",
+  "short_name": "FlixID",
+  "description": "Temukan trailer & platform streaming film favoritmu di satu tempat. Netflix, Disney+, Prime Video dan lainnya.",
+  "start_url": "/Queenmovie/",
+  "scope": "/Queenmovie/",
+  "display": "standalone",
+  "background_color": "#0f0f0f",
+  "theme_color": "#E50914",
+  "orientation": "portrait-primary",
+  "id": "/Queenmovie/",
+  "lang": "id-ID",
+  "categories": ["entertainment", "movies"],
+  "screenshots": [
+    {
+      "src": "https://chokierwin.github.io/Queenmovie/screenshot1.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "FlixID Homepage"
+    }
+  ],
+  "icons": [
+    {
+      "src": "https://chokierwin.github.io/Queenmovie/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://chokierwin.github.io/Queenmovie/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Film Trending",
+      "url": "/Queenmovie/",
+      "description": "Lihat film trending minggu ini"
+    },
+    {
+      "name": "Cari Film",
+      "url": "/Queenmovie/?search=true",
+      "description": "Cari film favorit"
+    }
+  ]
+}
