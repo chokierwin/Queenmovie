@@ -122,6 +122,7 @@
 </head>
 <body>
 
+<!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo"><span>Flix</span><span>ID</span></div>
@@ -134,11 +135,14 @@
   </div>
 </div>
 
+<!-- NOTIFICATION -->
 <div class="notif" id="notif"></div>
 
+<!-- APP -->
 <div id="app">
   <div class="layout">
 
+    <!-- SIDEBAR -->
     <div class="sidebar">
       <div class="sidebar-logo">
         <span>Flix</span><span>ID</span>
@@ -172,8 +176,10 @@
       </div>
     </div>
 
+    <!-- MAIN -->
     <div class="main">
 
+      <!-- DASHBOARD PAGE -->
       <div class="page active" id="page-dashboard">
         <div class="page-header">
           <div class="page-title">Dashboard <span>FlixID</span></div>
@@ -259,6 +265,7 @@
         </div>
       </div>
 
+      <!-- ARTIKEL PAGE -->
       <div class="page" id="page-artikel">
         <div class="page-header">
           <div class="page-title">Kelola <span>Artikel</span></div>
@@ -328,6 +335,7 @@
         </div>
       </div>
 
+      <!-- FILM PAGE -->
       <div class="page" id="page-film">
         <div class="page-header">
           <div class="page-title">Film <span>Trending</span></div>
@@ -341,6 +349,7 @@
         </div>
       </div>
 
+      <!-- AGC PAGE -->
       <div class="page" id="page-agc">
         <div class="page-header">
           <div class="page-title">AGC <span>Settings</span></div>
@@ -411,6 +420,7 @@
         </div>
       </div>
 
+      <!-- IKLAN PAGE -->
       <div class="page" id="page-iklan">
         <div class="page-header">
           <div class="page-title">Iklan & <span>AdSense</span></div>
@@ -458,6 +468,7 @@
         </div>
       </div>
 
+      <!-- ANALITIK PAGE -->
       <div class="page" id="page-analitik">
         <div class="page-header">
           <div class="page-title">Analitik <span>Traffic</span></div>
@@ -481,6 +492,7 @@
         </div>
       </div>
 
+      <!-- SEO PAGE -->
       <div class="page" id="page-seo">
         <div class="page-header">
           <div class="page-title">SEO <span>Tools</span></div>
@@ -531,6 +543,7 @@
         </div>
       </div>
 
+      <!-- PENGGUNA PAGE -->
       <div class="page" id="page-pengguna">
         <div class="page-header">
           <div class="page-title">Kelola <span>Pengguna</span></div>
@@ -547,6 +560,7 @@
         </div>
       </div>
 
+      <!-- PENGATURAN PAGE -->
       <div class="page" id="page-pengaturan">
         <div class="page-header">
           <div class="page-title">Pengaturan <span>Website</span></div>
@@ -572,3 +586,162 @@
               <a href="https://adsense.google.com" target="_blank" class="btn btn-ghost" style="text-decoration:none;text-align:center">💰 Google AdSense</a>
               <a href="https://github.com/chokierwin/Queenmovie" target="_blank" class="btn btn-ghost" style="text-decoration:none;text-align:center">🐙 GitHub Repo</a>
               <a href="https://pwabuilder.com" target="_blank" class="btn btn-ghost" style="text-decoration:none;text-align:center">📱 PWA Builder</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end main -->
+  </div><!-- end layout -->
+</div><!-- end app -->
+
+<!-- Firebase JavaScript Module Configuration -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAz5RCR0F71MtHnZ-daPLDzSxAmD2BhBYk",
+    authDomain: "calm-history-468711-e6.firebaseapp.com",
+    projectId: "calm-history-468711-e6",
+    storageBucket: "calm-history-468711-e6.firebasestorage.app",
+    messagingSenderId: "382975857631",
+    appId: "1:382975857631:web:1fe6482ea61445ecc52a6a"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const ADMIN_EMAIL = 'chokierwin@gmail.com';
+
+  onAuthStateChanged(auth, user => {
+    if(user && user.email === ADMIN_EMAIL){
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      loadTrendingAdmin();
+    } else if(user && user.email !== ADMIN_EMAIL){
+      showLoginError('Akun ini tidak memiliki akses admin!');
+      signOut(auth);
+    }
+  });
+
+  // Global Scope Window Binding
+  window.adminLogin = async () => {
+    const email = document.getElementById('admin-email').value.trim();
+    const password = document.getElementById('admin-password').value;
+    if(!email||!password){ showLoginError('Isi email dan password!'); return; }
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch(e) {
+      showLoginError('Email atau password salah!');
+    }
+  };
+
+  window.adminLogout = async () => {
+    try {
+      await signOut(auth);
+      // REFRESH TOTAL HALAMAN SETELAH LOGOUT AGAR CACHE SESSION FIREBASE BERSIH TOTAL
+      window.location.reload();
+    } catch(e) {
+      console.error(e);
+    }
+  };
+</script>
+
+<!-- Skrip Logika Aplikasi Utama -->
+<script>
+const API_KEY = '1e1af9892dbebb210cd4c5a3fb1588ed';
+const IMG = 'https://image.tmdb.org/t/p/';
+
+function showLoginError(msg){
+  const el = document.getElementById('login-error');
+  el.textContent = msg; el.style.display = 'block';
+}
+
+function showPage(name, el){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(el) el.classList.add('active');
+  if(name === 'film') loadTrendingAdmin();
+}
+
+function showNotif(msg, type='success'){
+  const el = document.getElementById('notif');
+  el.textContent = msg;
+  el.className = `notif ${type} show`;
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+function toggleAGC(el){
+  el.classList.toggle('on');
+  showNotif(el.classList.contains('on') ? '✅ Fitur diaktifkan' : '⛔ Fitur dinonaktifkan');
+}
+
+function refreshData(){
+  loadTrendingAdmin();
+  showNotif('✅ Data berhasil diperbarui!');
+}
+
+function showNewArtikelForm(){
+  const form = document.getElementById('new-artikel-form');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+function generateArtikel(){
+  const title = document.getElementById('art-title').value;
+  if(!title){ showNotif('❌ Isi judul artikel dulu!', 'error'); return; }
+  showNotif('🤖 Fitur AI generate akan segera hadir!');
+}
+
+function saveArtikel(){
+  const title = document.getElementById('art-title').value;
+  if(!title){ showNotif('❌ Isi judul artikel dulu!', 'error'); return; }
+  showNotif('✅ Draft tersimpan: '+title);
+}
+
+async function loadTrendingAdmin(){
+  try {
+    const res = await fetch(`https://api.themoviedb.org/3/trending/movie/week?api_key=${API_KEY}&language=id-ID`);
+    const data = await res.json();
+    const films = data.results || [];
+
+    // Tampilkan data list di dashboard utama (maksimal 5 item)
+    const list = document.getElementById('trending-list');
+    if(list){
+      list.innerHTML = films.slice(0,5).map((m,i) => `
+        <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+          <span style="font-size:12px;color:#444;width:16px">${i+1}</span>
+          ${m.poster_path ? `<img src="${IMG}w45${m.poster_path}" style="width:28px;height:40px;object-fit:cover;border-radius:3px" alt="${m.title||m.name}">` : '<div style="width:28px;height:40px;background:#1a1a2e;border-radius:3px"></div>'}
+          <div>
+            <div style="font-size:12px;font-weight:500">${m.title||m.name}</div>
+            <div style="font-size:10px;color:#666">★ ${m.vote_average ? m.vote_average.toFixed(1) : '—'}</div>
+          </div>
+        </div>`).join('');
+    }
+
+    // Tampilkan data grid di halaman katalog film (maksimal 10 item)
+    const grid = document.getElementById('admin-film-grid');
+    if(grid){
+      grid.innerHTML = films.slice(0,10).map(m => `
+        <div class="film-item">
+          ${m.poster_path ? `<img class="film-thumb" src="${IMG}w185${m.poster_path}" alt="${m.title||m.name}" loading="lazy">` : '<div class="film-thumb" style="display:flex;align-items:center;justify-content:center;font-size:24px">🎬</div>'}
+          <div class="film-info">
+            <div class="film-name">${m.title||m.name}</div>
+            <div class="film-rating">★ ${m.vote_average ? m.vote_average.toFixed(1) : '—'}</div>
+          </div>
+        </div>`).join('');
+    }
+  } catch(e) { console.error(e); }
+}
+
+// Enter key binding untuk login otomatis
+document.addEventListener('keydown', e => {
+  if(e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none'){
+    if (window.adminLogin) window.adminLogin();
+  }
+});
+</script>
+
+</body>
+</html>
