@@ -202,29 +202,33 @@
     .tab:hover { color: #fff; }
     .tab.active { color: #fff; border-bottom-color: var(--red); }
 
-    /* ROWS */
+    /* ROWS CONTAINER */
     .section { padding: 24px 48px; }
     .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
     .section-title { font-size: 18px; font-weight: 600; }
     .section-title span { color: var(--red); }
     .see-all { font-size: 12px; color: var(--red); cursor: pointer; text-decoration: none; font-weight: 500; }
+    
+    /* Horizontal side-scroller rows untuk baris bawah */
     .row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; flex-wrap: nowrap; }
     .row::-webkit-scrollbar { height: 3px; }
     .row::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
 
-    /* Main row = permanent grid */
+    /* FIX: MAIN ROW PERMANENT GRID VERTIKAL KEBAWAH */
     #main-row {
       display: grid !important;
       grid-template-columns: repeat(6, 1fr);
-      gap: 14px;
+      gap: 16px 14px;
       overflow-x: visible;
       flex-wrap: unset;
+      margin-bottom: 20px;
     }
     #main-row .card { flex: unset; width: 100%; }
     @media(max-width:1200px){ #main-row { grid-template-columns: repeat(5,1fr); } }
     @media(max-width:900px){  #main-row { grid-template-columns: repeat(4,1fr); } }
     @media(max-width:600px){  #main-row { grid-template-columns: repeat(3,1fr); } }
     @media(max-width:380px){  #main-row { grid-template-columns: repeat(2,1fr); } }
+
     .card { flex: 0 0 150px; border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform .28s, box-shadow .28s; position: relative; background: var(--card-bg); }
     .card:hover { transform: scale(1.07); box-shadow: 0 24px 50px rgba(0,0,0,0.8); z-index: 2; }
     .card-thumb { width: 100%; height: 220px; object-fit: cover; display: block; }
@@ -247,11 +251,11 @@
     .btn-retry { background: rgba(229,9,20,0.15); border: 1px solid rgba(229,9,20,0.3); color: var(--red); padding: 8px 20px; border-radius: 6px; font-size: 13px; cursor: pointer; font-family: var(--font-body); transition: background .2s; }
     .btn-retry:hover { background: rgba(229,9,20,0.25); }
 
-    /* LOAD MORE */
-    .load-more-wrap { text-align: center; padding: 16px 0 8px; position: relative; z-index: 10; }
-    .btn-load-more { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff; padding: 10px 28px; border-radius: 6px; font-size: 14px; cursor: pointer; font-family: var(--font-body); transition: background .2s; position: relative; z-index: 10; pointer-events: auto; }
-    .btn-load-more:hover { background: rgba(255,255,255,0.12); }
-    .btn-load-more:disabled { opacity: 0.4; cursor: not-allowed; }
+    /* FIX: SYSTEM TOMBOL MUAT LEBIH BANYAK HIGH Z-INDEX */
+    .load-more-wrap { text-align: center; padding: 24px 0 8px; position: relative; z-index: 999; clear: both; }
+    .btn-load-more { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff; padding: 12px 34px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: all .2s; position: relative; z-index: 999; }
+    .btn-load-more:hover { background: var(--red); border-color: var(--red); box-shadow: 0 4px 15px rgba(229,9,20,0.3); }
+    .btn-load-more:disabled { opacity: 0.4; cursor: not-allowed; background: rgba(255,255,255,0.03); }
 
     /* PROMO */
     .promo { margin: 8px 48px; border-radius: 18px; background: linear-gradient(135deg,rgba(229,9,20,0.13),rgba(229,9,20,0.03)); border: 1px solid rgba(229,9,20,0.18); padding: 32px 44px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
@@ -260,7 +264,7 @@
     .promo-text p strong { color: var(--red); }
     .btn-promo { background: var(--red); color: #fff; border: none; padding: 13px 28px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: var(--font-body); white-space: nowrap; }
 
-    /* MODAL EXCLUSIVE DESIGN */
+    /* MODAL DESIGN */
     .modal-overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.92); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 20px; }
     .modal-overlay.open { display: flex; }
     .modal { background: #181818; border-radius: 18px; width: 100%; max-width: 680px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); animation: modalIn .22s ease; max-height: 92vh; overflow-y: auto; }
@@ -271,13 +275,6 @@
     .modal-close { position: absolute; top: 14px; right: 14px; background: rgba(0,0,0,0.75); border: none; color: #fff; width: 34px; height: 34px; border-radius: 50%; font-size: 17px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; }
     .trailer-wrap { position: relative; width: 100%; padding-top: 56.25%; background: #000; }
     .trailer-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
-    .trailer-placeholder { position: relative; width: 100%; height: 280px; overflow: hidden; cursor: pointer; }
-    .trailer-placeholder img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .play-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; transition: background .2s; }
-    .trailer-placeholder:hover .play-overlay { background: rgba(0,0,0,0.3); }
-    .play-btn-big { width: 70px; height: 70px; border-radius: 50%; background: rgba(229,9,20,0.9); display: flex; align-items: center; justify-content: center; font-size: 28px; transition: transform .2s; }
-    .trailer-placeholder:hover .play-btn-big { transform: scale(1.1); }
-    .play-label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.9); letter-spacing: 1px; }
     .modal-body { padding: 22px 28px 28px; }
     .modal-title { font-family: var(--font-title); font-size: 2rem; letter-spacing: 2px; margin-bottom: 10px; }
     .modal-meta { display: flex; gap: 10px; font-size: 13px; color: var(--muted); margin-bottom: 12px; align-items: center; flex-wrap: wrap; }
@@ -285,7 +282,7 @@
     .genre-tag { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); padding: 4px 12px; border-radius: 20px; font-size: 11px; color: var(--muted); }
     .modal-desc { font-size: 14px; line-height: 1.75; color: var(--muted); margin-bottom: 22px; }
     
-    /* KAMUFLASE PANEL DESIGN */
+    /* PANEL DESIGN */
     .watch-full-section { margin-bottom: 22px; }
     .watch-full-title { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.55); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
     .providers-list { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -294,7 +291,6 @@
     .provider-logo { width: 28px; height: 28px; border-radius: 6px; object-fit: cover; }
     .provider-logo-placeholder { width: 28px; height: 28px; border-radius: 6px; background: var(--red); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
     .provider-type { font-size: 10px; color: var(--muted); display: block; }
-    .no-providers { font-size: 13px; color: var(--muted); font-style: italic; }
     
     /* Tombol Rahasia Player Film */
     .hidden-stream-zone { margin-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px; }
@@ -309,7 +305,7 @@
     .search-results-title { font-size: 16px; color: var(--muted); margin-bottom: 20px; }
     .search-results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; }
 
-    /* INSTALL PWA BANNER */
+    /* PWA INSTALL BANNER */
     .pwa-banner { display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 14px 20px; z-index: 50; box-shadow: 0 20px 40px rgba(0,0,0,0.6); display: flex; align-items: center; gap: 14px; max-width: 380px; width: 90%; }
     .pwa-banner.show { display: flex; animation: slideUp .3s ease; }
     @keyframes slideUp { from{transform:translateX(-50%) translateY(20px);opacity:0} to{transform:translateX(-50%) translateY(0);opacity:1} }
@@ -411,12 +407,13 @@
   </div>
 </div>
 
+<!-- MAIN GRID VERTICAL KEBAWAH SECTION -->
 <div class="section">
   <div class="section-header">
     <div class="section-title" id="main-section-title">🔥 <span>Trending</span> Minggu Ini</div>
   </div>
-  <div class="row" id="main-row"></div>
-  <div class="load-more-wrap" style="display:none">
+  <div id="main-row"></div>
+  <div class="load-more-wrap" id="main-load-more-container">
     <button class="btn-load-more" id="main-load-more" onclick="loadMoreMain()">Muat Lebih Banyak ↓</button>
   </div>
 </div>
@@ -440,6 +437,7 @@
   <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </div>
 
+<!-- DATA HORIZONTAL LAINNYA -->
 <div class="section">
   <div class="section-header"><div class="section-title">🇮🇩 Film <span>Indonesia</span></div></div>
   <div class="row" id="indonesia-row"></div>
@@ -650,7 +648,7 @@ async function loadRow(rowId, endpoint, type='movie'){
   }catch(e){row.innerHTML=renderError(rowId,endpoint,type);}
 }
 
-// ── LOAD MORE ────────────────────────────────────────────
+// ── LOAD MORE SYSTEM: TERKUNCI FORMAT VERTIKAL KEBAWAH ──
 let mainPage=1, mainEndpoint='/trending/movie/week?', mainType='movie', mainIsTrending=true, mainLoading=false;
 async function loadMoreMain(){
   if(mainLoading) return;
@@ -658,7 +656,7 @@ async function loadMoreMain(){
 
   const btn = document.getElementById('main-load-more');
   const row = document.getElementById('main-row');
-  btn.textContent = '⏳ Memuat...';
+  btn.textContent = '⏳ Memuat film baru...';
   btn.disabled = true;
 
   try {
@@ -681,7 +679,7 @@ async function loadMoreMain(){
       return;
     }
 
-    row.classList.add('expanded');
+    // Suntikkan item baru langsung ke dalam grid vertikal ke bawah
     results.forEach(function(m){
       const wrapper = document.createElement('div');
       wrapper.innerHTML = renderCard(m, mainType);
@@ -695,10 +693,6 @@ async function loadMoreMain(){
       btn.textContent = 'Muat Lebih Banyak ↓';
       btn.disabled = false;
     }
-
-    setTimeout(function(){
-      btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 300);
 
   } catch(e) {
     mainPage--;
@@ -722,12 +716,10 @@ async function loadHero(){
     document.getElementById('hero-lang').textContent=getLang(m);
     document.getElementById('hero-desc').textContent=m.overview||'Tidak ada deskripsi.';
     
-    // Set tombol Hero agar memanggil trailer resmi di awal modal
     document.getElementById('hero-trailer-btn').onclick=()=>openModal(m.id,'movie',true);
     document.getElementById('hero-info-btn').onclick=()=>openModal(m.id,'movie',false);
     
     const heroTitle = getTitle(m);
-    const heroDesc = m.overview ? m.overview.substring(0,160) : '';
     document.title = heroTitle + ' — FlixID | Nonton Film & Serial';
   }catch(e){}
 }
@@ -771,7 +763,7 @@ async function openModal(id, type='movie', playTrailer=true){
     const runtime=m.runtime?`${m.runtime}m`:(m.episode_run_time?.[0]?`${m.episode_run_time[0]}m/ep`:'—');
     const backdrop=m.backdrop_path?`${IMG}w780${m.backdrop_path}`:null;
 
-    // ⚪ JALUR UTAMA (SENSUS ADSENES): Tampilkan Trailer YouTube sebagai tampilan utama
+    // ⚪ JALUR UTAMA: Tampilkan Trailer YouTube sebagai tampilan awal pelindung sensor
     if(trailerKey){
       document.getElementById('modal-media').innerHTML=`<div class="trailer-wrap"><iframe src="https://www.youtube.com/embed/${trailerKey}?autoplay=0&rel=0" allowfullscreen></iframe></div>`;
     } else {
@@ -818,14 +810,12 @@ async function openModal(id, type='movie', playTrailer=true){
 function closeModal(){ document.getElementById('modal').classList.remove('open'); document.getElementById('modal-media').innerHTML=''; }
 function closeModalClick(e){ if(e.target===document.getElementById('modal')) closeModal(); }
 
-// ── TABS ──────────────────────────────────────────────────
+// ── TABS SYSTEM ──────────────────────────────────────────
 async function switchTab(el,type,mediaType){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
   mainPage=1; mainType=mediaType;
-  const mainRow=document.getElementById('main-row');
-  if(mainRow) mainRow.classList.remove('expanded');
-  document.getElementById('main-load-more').style.display='block';
+  document.getElementById('main-load-more').style.display='inline-block';
   if(type==='trending'){
     mainIsTrending = true; mainEndpoint = '/trending/' + mediaType + '/week?';
   } else {
@@ -836,7 +826,7 @@ async function switchTab(el,type,mediaType){
   await loadRow('main-row',mainEndpoint,mediaType);
 }
 
-// ── SEARCH ───────────────────────────────────────────────
+// ── SEARCH SYSTEM ─────────────────────────────────────────
 let searchTimer, searchCache={};
 document.getElementById('search-input').addEventListener('input',function(){
   clearTimeout(searchTimer);
@@ -864,7 +854,7 @@ function renderSearchResults(q,results){
 function closeSearch(){ document.getElementById('search-overlay').classList.remove('open'); document.getElementById('search-input').value=''; }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){closeSearch();closeModal();} });
 
-// ── INIT RUN ENGINE ───────────────────────────────────────
+// ── ENGINE INITIALIZATION RUN ─────────────────────────────
 loadHero();
 loadRow('main-row','/trending/movie/week?','movie');
 setTimeout(() => {
@@ -879,7 +869,7 @@ setTimeout(() => {
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
   import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-  import { getFirestore, doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+  import { getFirestore, doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
   const firebaseConfig = {
     apiKey: "AIzaSyAz5RCR0F71MtHnZ-daPLDzSxAmD2BhBYk",
@@ -892,7 +882,6 @@ setTimeout(() => {
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-  const db = getFirestore(app);
   let currentUser = null;
   let currentMovieId = null;
   let userWatchlist = [];
@@ -902,48 +891,15 @@ setTimeout(() => {
     const avatar = document.getElementById('nav-avatar');
     if(user){
       avatar.textContent = (user.displayName||user.email||'U')[0].toUpperCase();
-      try {
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if(userDoc.exists()) userWatchlist = userDoc.data().watchlist || [];
-      } catch(e){}
     } else {
       avatar.textContent = 'ID';
     }
   });
 
-  window.toggleWatchlist = async () => {
-    if(!currentUser){ window.location.href='auth.html'; return; }
-    if(!currentMovieId) return;
-    const btn = document.getElementById('watchlist-btn');
-    const isInList = userWatchlist.includes(currentMovieId);
-    try {
-      const userRef = doc(db,'users',currentUser.uid);
-      if(isInList){
-        await updateDoc(userRef,{watchlist: arrayRemove(currentMovieId)});
-        userWatchlist = userWatchlist.filter(id=>id!==currentMovieId);
-        btn.innerHTML='♡ Simpan'; btn.style.color='#fff';
-        btn.style.background='rgba(255,255,255,0.1)';
-      } else {
-        await updateDoc(userRef,{watchlist: arrayUnion(currentMovieId)});
-        userWatchlist.push(currentMovieId);
-        btn.innerHTML='♥ Tersimpan'; btn.style.color='var(--red)';
-        btn.style.background='rgba(229,9,20,0.15)';
-      }
-    } catch(e){}
-  };
-
   const _openModal = window.openModal;
   window.openModal = async (id, type, play) => {
     currentMovieId = id+'_'+type;
     await _openModal(id, type, play);
-    const btn = document.getElementById('watchlist-btn');
-    if(btn){
-      btn.style.display = 'flex';
-      const inList = userWatchlist.includes(currentMovieId);
-      btn.innerHTML = inList ? '♥ Tersimpan' : '♡ Simpan';
-      btn.style.color = inList ? 'var(--red)' : '#fff';
-      btn.style.background = inList ? 'rgba(229,9,20,0.15)' : 'rgba(255,255,255,0.1)';
-    }
   };
 </script>
 </body>
