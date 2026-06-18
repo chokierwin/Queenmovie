@@ -85,7 +85,7 @@
         "name": "Apakah FlixID menayangkan film secara langsung?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Tidak. FlixID adalah platform agregator yang membantu pengguna menemukan tempat streaming legal seperti Netflix, Disney+, Prime Video, Viu, dan Vidio."
+          "text": "Ya. FlixID kini menyediakan fitur streaming film alternatif dan informasi rujukan platform legal."
         }
       },
       {
@@ -138,7 +138,6 @@
   <script async defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8642572709653420" crossorigin="anonymous"></script>
 
   <!-- Google Analytics -->
-  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-6JDD9XZQWQ"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -209,12 +208,11 @@
     .section-title { font-size: 18px; font-weight: 600; }
     .section-title span { color: var(--red); }
     .see-all { font-size: 12px; color: var(--red); cursor: pointer; text-decoration: none; font-weight: 500; }
-    /* Horizontal rows untuk section lain */
     .row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; flex-wrap: nowrap; }
     .row::-webkit-scrollbar { height: 3px; }
     .row::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
 
-    /* Main row = permanent grid seperti JustWatch/LK21 */
+    /* Main row = permanent grid */
     #main-row {
       display: grid !important;
       grid-template-columns: repeat(6, 1fr);
@@ -262,40 +260,44 @@
     .promo-text p strong { color: var(--red); }
     .btn-promo { background: var(--red); color: #fff; border: none; padding: 13px 28px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: var(--font-body); white-space: nowrap; }
 
-    /* MODAL */
-    .modal-overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.92); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 20px; }
+    /* MODAL EXCLUSIVE DESIGN FOR EMBED STREAMING */
+    .modal-overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.94); backdrop-filter: blur(10px); align-items: center; justify-content: center; padding: 20px; }
     .modal-overlay.open { display: flex; }
-    .modal { background: #181818; border-radius: 18px; width: 100%; max-width: 680px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); animation: modalIn .22s ease; max-height: 92vh; overflow-y: auto; }
-    @keyframes modalIn { from{opacity:0;transform:scale(0.9)} to{opacity:1;transform:scale(1)} }
-    .modal-img-wrap { position: relative; }
-    .modal-backdrop { width: 100%; height: 280px; object-fit: cover; display: block; }
-    .modal-backdrop-placeholder { width: 100%; height: 280px; display: flex; align-items: center; justify-content: center; font-size: 80px; background: linear-gradient(160deg,#1a1a2e,#16213e); }
-    .modal-close { position: absolute; top: 14px; right: 14px; background: rgba(0,0,0,0.75); border: none; color: #fff; width: 34px; height: 34px; border-radius: 50%; font-size: 17px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; }
-    .trailer-wrap { position: relative; width: 100%; padding-top: 56.25%; background: #000; }
-    .trailer-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
-    .trailer-placeholder { position: relative; width: 100%; height: 280px; overflow: hidden; cursor: pointer; }
-    .trailer-placeholder img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .play-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; transition: background .2s; }
-    .trailer-placeholder:hover .play-overlay { background: rgba(0,0,0,0.3); }
-    .play-btn-big { width: 70px; height: 70px; border-radius: 50%; background: rgba(229,9,20,0.9); display: flex; align-items: center; justify-content: center; font-size: 28px; transition: transform .2s; }
-    .trailer-placeholder:hover .play-btn-big { transform: scale(1.1); }
-    .play-label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.9); letter-spacing: 1px; }
-    .modal-body { padding: 22px 28px 28px; }
-    .modal-title { font-family: var(--font-title); font-size: 2rem; letter-spacing: 2px; margin-bottom: 10px; }
+    .modal { background: #141414; border-radius: 16px; width: 100%; max-width: 820px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); animation: modalIn .22s ease; max-height: 94vh; overflow-y: auto; }
+    @keyframes modalIn { from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)} }
+    .modal-img-wrap { position: relative; background: #000; }
+    
+    /* 16:9 Dynamic Video Box */
+    .video-frame-wrap { position: relative; width: 100%; padding-top: 56.25%; background: #000; }
+    .video-frame-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; z-index: 5; }
+    
+    .modal-close { position: absolute; top: 14px; right: 14px; background: rgba(0,0,0,0.8); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 18px; cursor: pointer; z-index: 20; display: flex; align-items: center; justify-content: center; transition: background .2s; }
+    .modal-close:hover { background: var(--red); }
+    
+    /* Premium Server Selection Bar */
+    .premium-server-bar { background: #1c1c1c; padding: 12px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .server-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-weight: 600; }
+    .server-btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .srv-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; padding: 6px 14px; border-radius: 5px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: all .2s; }
+    .srv-btn:hover { background: rgba(255,255,255,0.12); }
+    .srv-btn.active { background: var(--red); border-color: var(--red); box-shadow: 0 2px 8px rgba(229,9,20,0.4); }
+
+    .modal-body { padding: 24px 28px 28px; }
+    .modal-title { font-family: var(--font-title); font-size: 2.2rem; letter-spacing: 1px; margin-bottom: 8px; color: #fff; }
     .modal-meta { display: flex; gap: 10px; font-size: 13px; color: var(--muted); margin-bottom: 12px; align-items: center; flex-wrap: wrap; }
-    .modal-genres { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
-    .genre-tag { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); padding: 4px 12px; border-radius: 20px; font-size: 11px; color: var(--muted); }
-    .modal-desc { font-size: 14px; line-height: 1.75; color: var(--muted); margin-bottom: 22px; }
-    .watch-full-section { margin-bottom: 22px; }
-    .watch-full-title { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.55); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+    .modal-genres { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .genre-tag { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 20px; font-size: 11px; color: var(--muted); }
+    .modal-desc { font-size: 14px; line-height: 1.75; color: #ccc; margin-bottom: 24px; }
+    
+    .watch-full-section { margin-bottom: 14px; border-top: 1px solid var(--border); padding-top: 20px; }
+    .watch-full-title { font-size: 12px; font-weight: 600; color: var(--red); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
     .providers-list { display: flex; flex-wrap: wrap; gap: 10px; }
-    .provider-btn { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 14px; text-decoration: none; color: #fff; font-size: 13px; font-weight: 500; transition: all .2s; }
-    .provider-btn:hover { background: rgba(255,255,255,0.13); border-color: rgba(255,255,255,0.25); transform: translateY(-1px); }
-    .provider-logo { width: 28px; height: 28px; border-radius: 6px; object-fit: cover; }
-    .provider-logo-placeholder { width: 28px; height: 28px; border-radius: 6px; background: var(--red); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
-    .provider-type { font-size: 10px; color: var(--muted); display: block; }
-    .no-providers { font-size: 13px; color: var(--muted); font-style: italic; }
-    .modal-actions { display: flex; gap: 12px; margin-top: 4px; }
+    .provider-btn { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; text-decoration: none; color: #fff; font-size: 12px; transition: all .2s; }
+    .provider-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+    .provider-logo { width: 24px; height: 24px; border-radius: 4px; }
+    .provider-type { font-size: 9px; color: var(--muted); }
+    
+    .modal-actions { display: flex; gap: 12px; margin-top: 10px; }
 
     /* SEARCH OVERLAY */
     .search-overlay { display: none; position: fixed; inset: 0; z-index: 150; background: rgba(0,0,0,0.96); padding: 100px 48px 48px; overflow-y: auto; }
@@ -339,12 +341,13 @@
       .footer-top{flex-direction:column}
       .search-overlay{padding:90px 20px 20px}
       .modal-body{padding:16px 18px 22px}
+      .premium-server-bar{padding:10px 18px;}
     }
   </style>
 </head>
 <body>
 
-<a href="#main-content" style="position:absolute;top:-40px;left:0;background:var(--red);color:#fff;padding:8px 16px;z-index:999;border-radius:0 0 4px 0;font-size:13px;text-decoration:none" onfocus="this.style.top='0'">Lewati ke konten</a>
+<a href="#main-row" style="position:absolute;top:-40px;left:0;background:var(--red);color:#fff;padding:8px 16px;z-index:999;border-radius:0 0 4px 0;font-size:13px;text-decoration:none" onfocus="this.style.top='0'">Lewati ke konten</a>
 <nav>
   <a href="index.html" class="logo"><span>Flix</span><span>ID</span></a>
   <div class="nav-links">
@@ -377,8 +380,8 @@
     </div>
     <p id="hero-desc">Memuat deskripsi...</p>
     <div class="hero-actions">
-      <button class="btn-play" id="hero-trailer-btn">▶ &nbsp;Tonton Trailer</button>
-      <button class="btn-info" id="hero-info-btn">🎬 &nbsp;Di Mana Nonton?</button>
+      <button class="btn-play" id="hero-trailer-btn">▶ &nbsp;Mulai Nonton</button>
+      <button class="btn-info" id="hero-info-btn">🎬 &nbsp;Detail Sinopsis</button>
     </div>
   </div>
 </div>
@@ -418,7 +421,7 @@
 <div class="promo">
   <div class="promo-text">
     <h3>CARI DI MANA NONTON?</h3>
-    <p>FlixID membantu kamu menemukan film di <strong>Netflix, Disney+, Prime Video</strong> dan lainnya.<br>Klik film → tonton trailer → langsung ke platform resminya!</p>
+    <p>FlixID membantu kamu menemukan film di <strong>Netflix, Disney+, Prime Video</strong> dan lainnya.<br>Klik film → langsung tonton gratis full movie dengan pilihan multi-server!</p>
   </div>
   <button class="btn-promo" onclick="window.scrollTo({top:0,behavior:'smooth'})">Jelajahi Sekarang →</button>
 </div>
@@ -453,10 +456,10 @@
 
 <!-- SEO CONTENT SECTION -->
 <section style="max-width:900px;margin:0 auto;padding:40px 48px 0">
-  <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:2px;margin-bottom:16px">Tonton Film dan Serial Favorit Secara <span style="color:#E50914">Legal</span></h2>
+  <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:2px;margin-bottom:16px">Tonton Film dan Serial Favorit Secara <span style="color:#E50914">Legal & Alternatif</span></h2>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px">
     <p style="font-size:14px;color:#b3b3b3;line-height:1.8">FlixID membantu kamu menemukan tempat streaming resmi untuk film, serial TV, anime, dan tayangan populer lainnya. Kami menampilkan informasi platform seperti <strong style="color:#fff">Netflix, Disney+, Prime Video, Viu, Vidio</strong>, dan layanan streaming legal lainnya yang tersedia di Indonesia.</p>
-    <p style="font-size:14px;color:#b3b3b3;line-height:1.8">Cari film favoritmu, lihat <strong style="color:#fff">trailer resmi</strong> langsung di FlixID, cek rating dari jutaan penonton dunia, baca sinopsis lengkap, dan temukan di platform mana film tersebut tersedia — semua <strong style="color:#fff">gratis tanpa perlu daftar</strong>.</p>
+    <p style="font-size:14px;color:#b3b3b3;line-height:1.8">Cari film favoritmu, lihat <strong style="color:#fff">full movie gratis</strong> langsung di FlixID, cek rating dari jutaan penonton dunia, baca sinopsis lengkap, dan temukan di platform mana film tersebut tersedia — semua <strong style="color:#fff">gratis tanpa perlu daftar</strong>.</p>
   </div>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:32px">
     <div style="background:#1a1a1a;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px;text-align:center">
@@ -466,8 +469,8 @@
     </div>
     <div style="background:#1a1a1a;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px;text-align:center">
       <div style="font-size:28px;margin-bottom:8px">▶️</div>
-      <div style="font-size:13px;font-weight:600;margin-bottom:4px">Trailer Resmi</div>
-      <div style="font-size:12px;color:#b3b3b3">Langsung dari YouTube</div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px">Pemutar Player</div>
+      <div style="font-size:12px;color:#b3b3b3">Multi-server kebal proteksi</div>
     </div>
     <div style="background:#1a1a1a;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px;text-align:center">
       <div style="font-size:28px;margin-bottom:8px">📺</div>
@@ -488,15 +491,6 @@
       <div style="font-size:28px;margin-bottom:8px">♡</div>
       <div style="font-size:13px;font-weight:600;margin-bottom:4px">Watchlist Pribadi</div>
       <div style="font-size:12px;color:#b3b3b3">Simpan film favorit (login)</div>
-    </div>
-  </div>
-  <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:24px;margin-bottom:8px">
-    <h3 style="font-size:15px;font-weight:600;margin-bottom:12px">❓ Pertanyaan yang Sering Ditanya</h3>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div><div style="font-size:13px;font-weight:600;margin-bottom:4px;color:#fff">Apakah FlixID gratis?</div><div style="font-size:13px;color:#b3b3b3">Ya, sepenuhnya gratis tanpa perlu mendaftar.</div></div>
-      <div><div style="font-size:13px;font-weight:600;margin-bottom:4px;color:#fff">Apakah bisa putar film di FlixID?</div><div style="font-size:13px;color:#b3b3b3">FlixID menampilkan trailer resmi dan mengarahkan ke platform streaming legal.</div></div>
-      <div><div style="font-size:13px;font-weight:600;margin-bottom:4px;color:#fff">Platform apa saja yang tersedia?</div><div style="font-size:13px;color:#b3b3b3">Netflix, Disney+, Prime Video, Viu, Vidio, WeTV, Crunchyroll dan lainnya.</div></div>
-      <div><div style="font-size:13px;font-weight:600;margin-bottom:4px;color:#fff">Bagaimana cara menyimpan film?</div><div style="font-size:13px;color:#b3b3b3">Login/daftar gratis, lalu klik ♡ Simpan di setiap film.</div></div>
     </div>
   </div>
 </section>
@@ -522,66 +516,6 @@
       <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:5px">Film Romantis Indonesia</div>
       <div style="font-size:11px;color:#b3b3b3">Film baper wajib tonton</div>
     </a>
-    <a href="artikel-serial-netflix-wajib-tonton.html" style="text-decoration:none;background:#1a1a1a;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px;display:block;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(229,9,20,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
-      <div style="font-size:26px;margin-bottom:8px">📺</div>
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:5px">Serial Netflix Wajib Tonton</div>
-      <div style="font-size:11px;color:#b3b3b3">Rekomendasi serial terbaik</div>
-    </a>
-    <a href="artikel-serial-tv-terbaik-2024.html" style="text-decoration:none;background:#1a1a1a;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px;display:block;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(229,9,20,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
-      <div style="font-size:26px;margin-bottom:8px">🎭</div>
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:5px">Serial TV Terbaik 2024</div>
-      <div style="font-size:11px;color:#b3b3b3">Wajib binge-watch sekarang</div>
-    </a>
-    <a href="artikel-anime-populer-2024.html" style="text-decoration:none;background:#1a1a1a;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px;display:block;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(229,9,20,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
-      <div style="font-size:26px;margin-bottom:8px">⛩️</div>
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:5px">Anime Terpopuler 2024</div>
-      <div style="font-size:11px;color:#b3b3b3">Anime terbaik tahun ini</div>
-    </a>
-    <a href="artikel-anime-terbaik-sepanjang-masa.html" style="text-decoration:none;background:#1a1a1a;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px;display:block;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(229,9,20,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
-      <div style="font-size:26px;margin-bottom:8px">⭐</div>
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:5px">Anime Terbaik Sepanjang Masa</div>
-      <div style="font-size:11px;color:#b3b3b3">Anime legendaris wajib tonton</div>
-    </a>
-    <a href="artikel-film-action-netflix-terbaik.html" style="text-decoration:none;background:#1a1a1a;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px;display:block;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(229,9,20,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
-      <div style="font-size:26px;margin-bottom:8px">💥</div>
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:5px">Film Action Netflix Terbaik</div>
-      <div style="font-size:11px;color:#b3b3b3">Aksi seru di Netflix</div>
-    </a>
-    <a href="artikel-film-thriller-terbaik.html" style="text-decoration:none;background:#1a1a1a;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px;display:block;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(229,9,20,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
-      <div style="font-size:26px;margin-bottom:8px">🔪</div>
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:5px">Film Thriller Terbaik</div>
-      <div style="font-size:11px;color:#b3b3b3">Bikin jantung berdegup kencang</div>
-    </a>
-    <a href="artikel-film-korea-terbaru.html" style="text-decoration:none;background:#1a1a1a;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px;display:block;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(229,9,20,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
-      <div style="font-size:26px;margin-bottom:8px">🇰🇷</div>
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:5px">Film Korea Terbaru 2024</div>
-      <div style="font-size:11px;color:#b3b3b3">Karya terbaik Hallyu Wave</div>
-    </a>
-    <a href="artikel-urutan-film-marvel.html" style="text-decoration:none;background:#1a1a1a;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px;display:block;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(229,9,20,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
-      <div style="font-size:26px;margin-bottom:8px">🦸</div>
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:5px">Urutan Nonton Film Marvel</div>
-      <div style="font-size:11px;color:#b3b3b3">Panduan lengkap MCU</div>
-    </a>
-    <a href="artikel-film-disney-plus-terbaik.html" style="text-decoration:none;background:#1a1a1a;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px;display:block;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(229,9,20,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
-      <div style="font-size:26px;margin-bottom:8px">✨</div>
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:5px">Film Disney+ Terbaik</div>
-      <div style="font-size:11px;color:#b3b3b3">Marvel, Pixar & Disney Classic</div>
-    </a>
-    <a href="artikel-film-keluarga-terbaik.html" style="text-decoration:none;background:#1a1a1a;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px;display:block;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(229,9,20,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
-      <div style="font-size:26px;margin-bottom:8px">👨‍👩‍👧</div>
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:5px">Film Keluarga Terbaik</div>
-      <div style="font-size:11px;color:#b3b3b3">Cocok untuk semua usia</div>
-    </a>
-    <a href="artikel-perbedaan-netflix-disney-prime.html" style="text-decoration:none;background:#1a1a1a;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px;display:block;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(229,9,20,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
-      <div style="font-size:26px;margin-bottom:8px">💡</div>
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:5px">Netflix vs Disney+ vs Prime</div>
-      <div style="font-size:11px;color:#b3b3b3">Platform streaming terbaik?</div>
-    </a>
-    <a href="artikel-tips-pilih-film.html" style="text-decoration:none;background:#1a1a1a;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px;display:block;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(229,9,20,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
-      <div style="font-size:26px;margin-bottom:8px">🎯</div>
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:5px">7 Tips Jitu Pilih Film</div>
-      <div style="font-size:11px;color:#b3b3b3">Cara memilih film yang tepat</div>
-    </a>
   </div>
 </div>
 
@@ -590,40 +524,21 @@
     <div class="footer-brand">
       <a href="index.html" class="footer-logo"><span>Flix</span><span>ID</span></a>
       <p>Platform pencari film & streaming terpercaya di Indonesia. Temukan trailer, rating, dan di mana nonton film favoritmu — gratis!</p>
-      <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap">
-        <a href="https://instagram.com/flixid" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);padding:6px 12px;border-radius:6px;font-size:12px;color:var(--muted);text-decoration:none;transition:all .2s" onmouseover="this.style.borderColor='rgba(229,9,20,0.4)';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,0.12)';this.style.color='var(--muted)'">📸 Instagram</a>
-        <a href="https://tiktok.com/@flixid" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);padding:6px 12px;border-radius:6px;font-size:12px;color:var(--muted);text-decoration:none;transition:all .2s" onmouseover="this.style.borderColor='rgba(229,9,20,0.4)';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,0.12)';this.style.color='var(--muted)'">🎵 TikTok</a>
-        <a href="https://twitter.com/flixid" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);padding:6px 12px;border-radius:6px;font-size:12px;color:var(--muted);text-decoration:none;transition:all .2s" onmouseover="this.style.borderColor='rgba(229,9,20,0.4)';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,0.12)';this.style.color='var(--muted)'">🐦 Twitter</a>
-      </div>
     </div>
     <div class="footer-cols">
       <div class="footer-col">
         <h4>Navigasi</h4>
         <a href="index.html">Beranda</a>
-        <a onclick="switchTab(document.querySelectorAll('.tab')[1],'popular','movie');window.scrollTo({top:0})">Film Populer</a>
-        <a onclick="switchTab(document.querySelectorAll('.tab')[3],'popular','tv');window.scrollTo({top:0})">Serial TV</a>
-        <a onclick="switchTab(document.querySelectorAll('.tab')[2],'top_rated','movie');window.scrollTo({top:0})">Top Rated</a>
       </div>
       <div class="footer-col">
         <h4>Streaming</h4>
         <a href="https://netflix.com" target="_blank" rel="noopener">Netflix</a>
         <a href="https://disneyplus.com" target="_blank" rel="noopener">Disney+</a>
-        <a href="https://primevideo.com" target="_blank" rel="noopener">Prime Video</a>
-        <a href="https://viu.com" target="_blank" rel="noopener">Viu</a>
       </div>
       <div class="footer-col">
         <h4>Info</h4>
         <a href="about.html">Tentang FlixID</a>
         <a href="privacy.html">Kebijakan Privasi</a>
-        <a href="contact.html">Kontak Kami</a>
-        <a href="privacy.html#dmca">DMCA</a>
-      </div>
-      <div class="footer-col">
-        <h4>Sosial Media</h4>
-        <a href="https://instagram.com/flixid" target="_blank" rel="noopener">📸 Instagram</a>
-        <a href="https://tiktok.com/@flixid" target="_blank" rel="noopener">🎵 TikTok</a>
-        <a href="https://twitter.com/flixid" target="_blank" rel="noopener">🐦 Twitter / X</a>
-        <a href="https://youtube.com/@flixid" target="_blank" rel="noopener">▶️ YouTube</a>
       </div>
     </div>
   </div>
@@ -633,13 +548,23 @@
   </div>
 </footer>
 
-<!-- MODAL -->
+<!-- PREMIUM EMBED COMPATIBLE MODAL ENGINE -->
 <div class="modal-overlay" id="modal" onclick="closeModalClick(event)">
   <div class="modal">
+    
+    <!-- Bagian Player Video Dinamis -->
     <div class="modal-img-wrap">
       <button class="modal-close" onclick="closeModal()">✕</button>
       <div id="modal-media"></div>
     </div>
+
+    <!-- Panel Pilihan Server Film Lengkap -->
+    <div class="premium-server-bar">
+      <span class="server-label">Pilih Server (Full Movie):</span>
+      <div class="server-btn-group" id="modalServerContainer"></div>
+    </div>
+
+    <!-- Detail Informasi Film -->
     <div class="modal-body">
       <div class="modal-title" id="modal-title">Memuat...</div>
       <div class="modal-meta" id="modal-meta"></div>
@@ -650,7 +575,7 @@
         <button class="btn-play" id="watchlist-btn" onclick="toggleWatchlist()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);display:none">
           ♡ Simpan
         </button>
-        <button class="btn-info" onclick="closeModal()">✕ Tutup</button>
+        <button class="btn-info" onclick="closeModal()">✕ Tutup Player</button>
       </div>
     </div>
   </div>
@@ -678,10 +603,7 @@
 
 <script>
 // ── CONFIG ──────────────────────────────────────────────
-// CATATAN KEAMANAN: Untuk produksi, pindahkan API key ke
-// backend/serverless (Netlify Functions / Vercel API / Cloudflare Worker)
-// Contoh endpoint: /api/tmdb?endpoint=/trending/movie/week
-const PROXY = 'https://api.themoviedb.org/3'; // Ganti dengan proxy backend
+const PROXY = 'https://api.themoviedb.org/3'; 
 const API_KEY = '1e1af9892dbebb210cd4c5a3fb1588ed';
 const IMG = 'https://image.tmdb.org/t/p/';
 const LANG = 'id-ID';
@@ -757,24 +679,17 @@ async function loadMoreMain(){
 
   try {
     mainPage++;
-
-    // Build URL correctly
     let url;
     if(mainIsTrending){
       url = PROXY + '/trending/' + mainType + '/week?api_key=' + API_KEY + '&language=' + LANG + '&page=' + mainPage;
     } else {
-      // mainEndpoint = '/movie/popular?' or '/tv/popular?' etc
       url = PROXY + mainEndpoint + 'api_key=' + API_KEY + '&language=' + LANG + '&page=' + mainPage;
     }
-
-    console.log('Fetching:', url);
 
     const res = await fetch(url);
     if(!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     const results = data.results || [];
-
-    console.log('Got results:', results.length);
 
     if(results.length === 0){
       btn.style.display = 'none';
@@ -782,10 +697,7 @@ async function loadMoreMain(){
       return;
     }
 
-    // Switch row to wrap grid layout
     row.classList.add('expanded');
-
-    // Append new cards
     results.forEach(function(m){
       const wrapper = document.createElement('div');
       wrapper.innerHTML = renderCard(m, mainType);
@@ -793,7 +705,6 @@ async function loadMoreMain(){
       if(card) row.appendChild(card);
     });
 
-    // Show/hide button
     if(mainPage >= (data.total_pages || 1)){
       btn.style.display = 'none';
     } else {
@@ -801,18 +712,15 @@ async function loadMoreMain(){
       btn.disabled = false;
     }
 
-    // Scroll to button smoothly
     setTimeout(function(){
       btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }, 300);
 
   } catch(e) {
-    console.error('Load more error:', e);
     mainPage--;
     btn.textContent = '❌ Gagal, Coba Lagi';
     btn.disabled = false;
   }
-
   mainLoading = false;
 }
 
@@ -822,7 +730,6 @@ async function loadHero(){
     const data=await apiFetch('/trending/movie/week?');
     const m=(data.results||[])[0]; if(!m) return;
     if(m.backdrop_path){
-      // Use w1280 instead of original for faster load
       document.getElementById('hero-bg').style.backgroundImage=`url(${IMG}w1280${m.backdrop_path})`;
     }
     document.getElementById('hero-title').textContent=getTitle(m);
@@ -830,9 +737,11 @@ async function loadHero(){
     document.getElementById('hero-year').textContent=getYear(m);
     document.getElementById('hero-lang').textContent=getLang(m);
     document.getElementById('hero-desc').textContent=m.overview||'Tidak ada deskripsi.';
-    document.getElementById('hero-trailer-btn').onclick=()=>openModal(m.id,'movie',true);
-    document.getElementById('hero-info-btn').onclick=()=>openModal(m.id,'movie',false);
-    // Update SEO meta dynamically based on trending film
+    
+    // Set tombol Hero agar langsung memanggil Modal Player Video
+    document.getElementById('hero-trailer-btn').onclick=()=>openModal(m.id,'movie');
+    document.getElementById('hero-info-btn').onclick=()=>openModal(m.id,'movie');
+    
     const heroTitle = getTitle(m);
     const heroDesc = m.overview ? m.overview.substring(0,160) : '';
     document.title = heroTitle + ' — FlixID | Nonton Film & Serial';
@@ -842,7 +751,6 @@ async function loadHero(){
     if(m.backdrop_path){
       document.querySelector('meta[property="og:image"]').content = '${IMG}w780'+m.backdrop_path;
     }
-    // Add structured data for current trending movie
     const movieSchema = {
       "@context": "https://schema.org",
       "@type": "Movie",
@@ -868,19 +776,7 @@ async function loadHero(){
   }catch(e){}
 }
 
-// ── TRAILER ───────────────────────────────────────────────
-async function getTrailerKey(id,type){
-  try{
-    const res=await fetch(`${PROXY}/${type}/${id}/videos?api_key=${API_KEY}&language=en-US`);
-    const data=await res.json();
-    const videos=data.results||[];
-    return (videos.find(v=>v.site==='YouTube'&&v.type==='Trailer'&&v.official)
-      ||videos.find(v=>v.site==='YouTube'&&v.type==='Trailer')
-      ||videos.find(v=>v.site==='YouTube'))?.key||null;
-  }catch(e){return null;}
-}
-
-// ── PROVIDERS ─────────────────────────────────────────────
+// ── GET PROVIDERS ─────────────────────────────────────────────
 async function getProviders(id,type){
   try{
     const res=await fetch(`${PROXY}/${type}/${id}/watch/providers?api_key=${API_KEY}`);
@@ -889,71 +785,81 @@ async function getProviders(id,type){
   }catch(e){return {};}
 }
 
-// ── MODAL ─────────────────────────────────────────────────
-async function openModal(id, type='movie', playTrailer=false){
+// ── MODAL UTAMA DENGAN ENGINE FULL MOVIE SAKTI ────────────────
+async function openModal(id, type='movie'){
   document.getElementById('modal').classList.add('open');
-  document.getElementById('modal-media').innerHTML=`<div style="height:280px;background:#111;display:flex;align-items:center;justify-content:center;color:var(--muted)">⏳ Memuat...</div>`;
-  document.getElementById('modal-title').textContent='Memuat...';
+  document.getElementById('modal-media').innerHTML=`<div style="height:280px;background:#111;display:flex;align-items:center;justify-content:center;color:var(--muted)">⏳ Mempersiapkan jalur player...</div>`;
+  document.getElementById('modal-title').textContent='Memuat Konten...';
+  document.getElementById('modalServerContainer').innerHTML='';
   ['modal-meta','modal-genres','modal-desc','watch-full-section'].forEach(id=>document.getElementById(id).innerHTML='');
 
-  // Track analytics
   if(typeof gtag!=='undefined') gtag('event','view_item',{item_id:id,item_category:type});
 
   try{
-    const [m, trailerKey, providers] = await Promise.all([
+    const [m, providers] = await Promise.all([
       fetch(`${PROXY}/${type}/${id}?api_key=${API_KEY}&language=${LANG}`).then(r=>r.json()),
-      getTrailerKey(id,type),
       getProviders(id,type)
     ]);
+    
     const title=getTitle(m), rating=getRating(m), year=getYear(m);
     const runtime=m.runtime?`${m.runtime}m`:(m.episode_run_time?.[0]?`${m.episode_run_time[0]}m/ep`:'—');
-    const backdrop=m.backdrop_path?`${IMG}w780${m.backdrop_path}`:null;
 
-    // Media
-    if(playTrailer && trailerKey){
-      document.getElementById('modal-media').innerHTML=`<div class="trailer-wrap"><iframe src="https://www.youtube.com/embed/${trailerKey}?autoplay=1&rel=0" allowfullscreen allow="autoplay"></iframe></div>`;
-    } else if(trailerKey){
-      const thumb=backdrop||`https://img.youtube.com/vi/${trailerKey}/maxresdefault.jpg`;
-      document.getElementById('modal-media').innerHTML=`<div class="trailer-placeholder" onclick="playTrailerNow('${trailerKey}')"><img src="${thumb}" alt="${title}" loading="lazy" onerror="this.src='https://img.youtube.com/vi/${trailerKey}/hqdefault.jpg'"><div class="play-overlay"><div class="play-btn-big">▶</div><div class="play-label">TONTON TRAILER</div></div></div>`;
-    } else {
-      document.getElementById('modal-media').innerHTML=backdrop
-        ?`<img src="${backdrop}" class="modal-backdrop" alt="${title}" loading="lazy">`
-        :`<div class="modal-backdrop-placeholder">🎬</div>`;
-    }
+    // 🚀 GENERATE LINK PLAYER UTUH ALTERNATIF (Bypass CORS & Kebal Blokir)
+    // Mendukung pemutaran otomatis untuk tipe 'movie' (film) maupun 'tv' (serial eps)
+    const servers = {
+      "Server Utama 4K": type === 'movie' ? `https://vidsrc.to/embed/movie/${id}` : `https://vidsrc.to/embed/tv/${id}/1/1`,
+      "Server VIP HD": type === 'movie' ? `https://embed.su/embed/movie/${id}` : `https://embed.su/embed/tv/${id}/1/1`,
+      "Server Multi-Sub": type === 'movie' ? `https://vidsrc.me/embed/movie?tmdb=${id}` : `https://vidsrc.me/embed/tv?tmdb=${id}&sea=1&epi=1`
+    };
+
+    // Tanamkan Iframe Player langsung di bagian atas modal
+    document.getElementById('modal-media').innerHTML=`<div class="video-frame-wrap"><iframe id="modalIframePlayer" src="${servers["Server Utama 4K"]}" allowfullscreen></iframe></div>`;
+
+    // Render tombol pilihan server secara dinamis
+    const serverContainer = document.getElementById('modalServerContainer');
+    Object.keys(servers).forEach((serverName, index) => {
+      const btn = document.createElement('button');
+      btn.className = `srv-btn ${index === 0 ? 'active' : ''}`;
+      btn.innerText = serverName;
+      btn.onclick = () => {
+        document.querySelectorAll('.srv-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('modalIframePlayer').src = servers[serverName];
+      };
+      serverContainer.appendChild(btn);
+    });
+
     document.getElementById('modal-title').textContent=title;
     document.getElementById('modal-meta').innerHTML=`<span class="rating-badge">★ ${rating}</span><span>${year}</span><span class="sep">|</span><span>${runtime}</span><span class="sep">|</span><span>${getLang(m)}</span>`;
     document.getElementById('modal-genres').innerHTML=(m.genres||[]).slice(0,4).map(g=>`<span class="genre-tag">${g.name}</span>`).join('');
     document.getElementById('modal-desc').textContent=m.overview||'Tidak ada deskripsi.';
 
-    // Providers
+    // Bagian Informasi Rujukan Platform Legal
     const region=providers['ID']||providers['US']||null;
     const regionLabel=providers['ID']?'🇮🇩 Indonesia':'🇺🇸 US';
-    let provHtml=`<div class="watch-full-title">📺 Tonton Film Lengkap di</div>`;
+    let provHtml=`<div class="watch-full-title">Opsi Rujukan Lisensi Legal:</div>`;
     if(region){
       const all=[...((region.flatrate||[]).map(p=>({...p,ptype:'Streaming'}))), ...((region.rent||[]).map(p=>({...p,ptype:'Sewa'}))), ...((region.buy||[]).map(p=>({...p,ptype:'Beli'})))];
       if(all.length){
-        provHtml+=`<div style="font-size:11px;color:var(--muted);margin-bottom:10px">Tersedia di ${regionLabel}</div><div class="providers-list">`;
+        provHtml+=`<div class="providers-list">`;
         const seen=new Set();
         all.forEach(p=>{
           if(seen.has(p.provider_name)) return; seen.add(p.provider_name);
-          const link=providerLinks[p.provider_name]||`https://www.themoviedb.org/movie/${id}/watch`;
-          const logo=p.logo_path?`<img class="provider-logo" src="${IMG}w45${p.logo_path}" alt="${p.provider_name}" loading="lazy">`:`<div class="provider-logo-placeholder">${p.provider_name[0]}</div>`;
-          provHtml+=`<a class="provider-btn" href="${link}" target="_blank" rel="noopener" onclick="gtag&&gtag('event','click_provider',{provider:p.provider_name})">${logo}<div><span>${p.provider_name}</span><span class="provider-type">${p.ptype}</span></div></a>`;
+          const link=providerLinks[p.provider_name]||`https://www.themoviedb.org/${type}/${id}/watch`;
+          const logo=p.logo_path?`<img class="provider-logo" src="${IMG}w45${p.logo_path}" alt="${p.provider_name}">`:`<div class="provider-logo-placeholder">${p.provider_name[0]}</div>`;
+          provHtml+=`<a class="provider-btn" href="${link}" target="_blank" rel="noopener">${logo}<div><span>${p.provider_name}</span><span class="provider-type">${p.ptype}</span></div></a>`;
         });
         provHtml+=`</div>`;
-      } else provHtml+=`<p class="no-providers">Belum tersedia di platform streaming saat ini.</p>`;
-    } else provHtml+=`<p class="no-providers">Info streaming tidak tersedia untuk film ini.</p>`;
-    if(trailerKey&&!playTrailer) provHtml+=`<div style="margin-top:14px"><button class="btn-play" style="font-size:13px;padding:10px 20px" onclick="playTrailerNow('${trailerKey}')">▶ Tonton Trailer Dulu</button></div>`;
+      } else provHtml+=`<p class="no-providers">Belum rilis lisensi digital di platform lokal.</p>`;
+    } else provHtml+=`<p class="no-providers">Info lisensi streaming resmi tidak ditemukan.</p>`;
+    
     document.getElementById('watch-full-section').innerHTML=provHtml;
   }catch(e){
     document.getElementById('modal-title').textContent='Gagal memuat.';
-    document.getElementById('modal-media').innerHTML=`<div class="error-state" style="height:200px"><div class="error-icon">⚠️</div><p>Gagal memuat data film</p><button class="btn-retry" onclick="openModal(${id},'${type}',${playTrailer})">🔄 Coba Lagi</button></div>`;
+    document.getElementById('modal-media').innerHTML=`<div class="error-state" style="height:200px"><div class="error-icon">⚠️</div><p>Gagal memuat data film</p></div>`;
   }
 }
 
-function playTrailerNow(key){
-  document.getElementById('modal-media').innerHTML=`<div class="trailer-wrap"><iframe src="https://www.youtube.com/embed/${key}?autoplay=1&rel=0" allowfullscreen allow="autoplay"></iframe></div>`;
-}
 function closeModal(){ document.getElementById('modal').classList.remove('open'); document.getElementById('modal-media').innerHTML=''; }
 function closeModalClick(e){ if(e.target===document.getElementById('modal')) closeModal(); }
 
@@ -963,7 +869,6 @@ async function switchTab(el,type,mediaType){
   el.classList.add('active');
   mainPage=1;
   mainType=mediaType;
-  // Reset expanded layout when switching tabs
   const mainRow=document.getElementById('main-row');
   if(mainRow) mainRow.classList.remove('expanded');
   document.getElementById('main-load-more').style.display='block';
@@ -980,13 +885,13 @@ async function switchTab(el,type,mediaType){
   await loadRow('main-row',mainEndpoint,mediaType);
 }
 
-// ── SEARCH (min 2 char + cache) ───────────────────────────
+// ── SEARCH ───────────────────────────────────────────────
 let searchTimer, searchCache={};
 document.getElementById('search-input').addEventListener('input',function(){
   clearTimeout(searchTimer);
   const q=this.value.trim();
   if(!q){ closeSearch(); return; }
-  if(q.length < 2){ // Minimum 2 karakter
+  if(q.length < 2){
     document.getElementById('search-overlay').classList.add('open');
     document.getElementById('search-results-title').textContent='Ketik minimal 2 karakter...';
     document.getElementById('search-results-grid').innerHTML='';
@@ -1048,12 +953,9 @@ window.addEventListener('scroll', function(){
 });
 
 // ── INIT ──────────────────────────────────────────────────
-// Script is at bottom of body so DOM is already ready
-// Load critical content first
 loadHero();
 loadRow('main-row','/trending/movie/week?','movie');
 
-// Defer non-critical rows to after page load
 if('requestIdleCallback' in window){
   requestIdleCallback(() => {
     loadRow('indonesia-row','/discover/movie?with_original_language=id&sort_by=popularity.desc&','movie');
@@ -1070,6 +972,7 @@ if('requestIdleCallback' in window){
   }, 1500);
 }
 </script>
+
 <!-- Firebase Auth for navbar & watchlist -->
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
@@ -1133,11 +1036,10 @@ if('requestIdleCallback' in window){
     } catch(e){ console.error(e); }
   };
 
-  // Patch openModal to show watchlist button
   const _openModal = window.openModal;
-  window.openModal = async (id, type, play) => {
+  window.openModal = async (id, type) => {
     currentMovieId = id+'_'+type;
-    await _openModal(id, type, play);
+    await _openModal(id, type);
     const btn = document.getElementById('watchlist-btn');
     if(btn){
       btn.style.display = 'flex';
