@@ -198,7 +198,7 @@
           <div class="stat-card">
             <div class="stat-label">Pengunjung Hari Ini</div>
             <div class="stat-value" id="stat-visitors">—</div>
-            <div class="stat-change neutral">Cek Google Analytics</div>
+            <div class="stat-change neutral"><a href="https://analytics.google.com" target="_blank" style="color:var(--yellow);text-decoration:underline">Cek Google Analytics →</a></div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Status AdSense</div>
@@ -206,9 +206,9 @@
             <div class="stat-change neutral">Menunggu approval</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Film di Database</div>
-            <div class="stat-value" id="stat-films">∞</div>
-            <div class="stat-change up">Real-time TMDB</div>
+            <div class="stat-label">Total Film Trending (TMDB)</div>
+            <div class="stat-value" id="stat-films">—</div>
+            <div class="stat-change up">Real-time minggu ini</div>
           </div>
         </div>
 
@@ -693,13 +693,22 @@ function saveArtikel(){
 }
 
 async function loadTrendingAdmin(){
+  const list = document.getElementById('trending-list');
+  const grid = document.getElementById('admin-film-grid');
+
   try {
     const res = await fetch(`https://api.themoviedb.org/3/trending/movie/week?api_key=${API_KEY}&language=id-ID`);
+    if(!res.ok) throw new Error('TMDB API error: '+res.status);
     const data = await res.json();
     const films = (data.results||[]).slice(0,10);
 
-    // Update dashboard list
-    const list = document.getElementById('trending-list');
+    if(films.length === 0) throw new Error('Tidak ada data film');
+
+    // Update stat card: total hasil trending minggu ini
+    const statFilms = document.getElementById('stat-films');
+    if(statFilms) statFilms.textContent = (data.total_results||films.length).toLocaleString('id-ID');
+
+    // Update dashboard list (top 5)
     if(list){
       list.innerHTML = films.slice(0,5).map((m,i) => `
         <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
@@ -707,16 +716,15 @@ async function loadTrendingAdmin(){
           ${m.poster_path ? `<img src="${IMG}w45${m.poster_path}" style="width:28px;height:40px;object-fit:cover;border-radius:3px" alt="${m.title||m.name}">` : '<div style="width:28px;height:40px;background:#1a1a2e;border-radius:3px"></div>'}
           <div>
             <div style="font-size:12px;font-weight:500">${m.title||m.name}</div>
-            <div style="font-size:10px;color:#666">★ ${m.vote_average?.toFixed(1)||'—'}</div>
+            <div style="font-size:10px;color:#666">★ ${m.vote_average?.toFixed(1)||'—'} • ${(m.release_date||'').slice(0,4)||'—'}</div>
           </div>
         </div>`).join('');
     }
 
-    // Update film grid
-    const grid = document.getElementById('admin-film-grid');
+    // Update film grid (top 10)
     if(grid){
       grid.innerHTML = films.map(m => `
-        <div class="film-item">
+        <div class="film-item" onclick="window.open('https://www.themoviedb.org/movie/${m.id}','_blank')" title="${m.title||m.name}">
           ${m.poster_path ? `<img class="film-thumb" src="${IMG}w185${m.poster_path}" alt="${m.title||m.name}" loading="lazy">` : '<div class="film-thumb" style="display:flex;align-items:center;justify-content:center;font-size:24px">🎬</div>'}
           <div class="film-info">
             <div class="film-name">${m.title||m.name}</div>
@@ -724,7 +732,21 @@ async function loadTrendingAdmin(){
           </div>
         </div>`).join('');
     }
-  } catch(e) { console.error(e); }
+
+    showNotif('✅ Data TMDB berhasil diperbarui');
+  } catch(e) {
+    console.error(e);
+    if(list) list.innerHTML = `<div style="color:#ff6b6b;font-size:12px">⚠️ Gagal memuat data TMDB. ${e.message||'Cek koneksi internet.'}</div>`;
+    if(grid) grid.innerHTML = `<div style="color:#ff6b6b;font-size:13px;grid-column:1/-1">⚠️ Gagal memuat data TMDB. Klik "Refresh TMDB" untuk coba lagi.</div>`;
+    showNotif('❌ Gagal memuat data TMDB', 'error');
+  }
+}
+
+// Update jumlah artikel otomatis dari jumlah baris tabel artikel
+function updateArtikelCount(){
+  const rows = document.querySelectorAll('#page-artikel table tr').length - 1; // minus header row
+  const statArtikel = document.getElementById('stat-artikel');
+  if(statArtikel && rows > 0) statArtikel.textContent = rows;
 }
 
 // Enter key for login
@@ -733,6 +755,9 @@ document.addEventListener('keydown', e => {
     window.adminLogin && window.adminLogin();
   }
 });
+
+// Run on load
+document.addEventListener('DOMContentLoaded', updateArtikelCount);
 </script>
 
 </body>
