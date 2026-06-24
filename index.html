@@ -938,7 +938,6 @@ function closeSearch(){ document.getElementById('search-overlay').remove('open')
     loadRow('toprated-row','/movie/top_rated?','movie');
     loadRow('tv-row','/tv/popular?','tv');
     loadRow('upcoming-row','/movie/upcoming?','movie');
-    loadCMSArtikel();
   }, 1200);
 
   // ── ARTIKEL CMS DARI GOOGLE SHEETS (via Apps Script) ──
@@ -947,14 +946,19 @@ function closeSearch(){ document.getElementById('search-overlay').remove('open')
   async function loadCMSArtikel(){
     const section = document.getElementById('cms-artikel-section');
     const grid = document.getElementById('cms-artikel-grid');
-    if(!section || !grid) return;
+    if(!section || !grid){ console.warn('[CMS] Element section/grid belum ditemukan'); return; }
 
     try {
+      console.log('[CMS] Mulai fetch artikel...');
       const res = await fetch(CMS_API_URL);
-      if(!res.ok) throw new Error('Gagal mengambil data CMS');
+      if(!res.ok) throw new Error('HTTP status '+res.status);
       const articles = await res.json();
+      console.log('[CMS] Data diterima:', articles);
 
-      if(!Array.isArray(articles) || articles.length === 0) return;
+      if(!Array.isArray(articles) || articles.length === 0){
+        console.warn('[CMS] Tidak ada artikel atau bukan array');
+        return;
+      }
 
       grid.innerHTML = articles.map(a => `
         <a href="artikel-cms.html?slug=${encodeURIComponent(a.slug||'')}" style="text-decoration:none;background:#1a1a1a;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px;display:block;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(229,9,20,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
@@ -964,10 +968,18 @@ function closeSearch(){ document.getElementById('search-overlay').remove('open')
         </a>`).join('');
 
       section.style.display = 'block';
+      console.log('[CMS] Berhasil render', articles.length, 'artikel');
     } catch(e) {
-      console.error('CMS Artikel error:', e);
+      console.error('[CMS] Gagal memuat artikel:', e);
       // Diam-diam gagal — section tetap hidden, tidak mengganggu pengalaman pengguna
     }
+  }
+
+  // Jalankan segera setelah DOM siap, tidak menunggu setTimeout row film
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', loadCMSArtikel);
+  } else {
+    loadCMSArtikel();
   }
 </script>
 </body>
