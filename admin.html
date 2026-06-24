@@ -273,23 +273,34 @@
         </div>
         <div id="new-artikel-form" style="display:none" class="card">
           <div class="card-title">✍️ Tulis Artikel Baru</div>
+          <div id="artikel-form-msg" style="display:none;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px"></div>
           <div class="grid-2">
             <div>
               <div class="form-group">
                 <label class="form-label">Judul Artikel</label>
-                <input type="text" class="form-input" id="art-title" placeholder="Contoh: 10 Film Action Terbaik 2024">
+                <input type="text" class="form-input" id="art-title" placeholder="Contoh: 10 Film Action Terbaik 2024" oninput="updateSlugPreview()">
               </div>
               <div class="form-group">
-                <label class="form-label">Kategori</label>
-                <select class="form-select" id="art-cat">
-                  <option>Film Indonesia</option>
-                  <option>Film Hollywood</option>
-                  <option>Serial TV</option>
-                  <option>Anime</option>
-                  <option>Film Korea</option>
-                  <option>Tips & Panduan</option>
-                  <option>Perbandingan Platform</option>
-                </select>
+                <label class="form-label">Slug (URL) — otomatis dari judul</label>
+                <input type="text" class="form-input" id="art-slug" placeholder="otomatis-dari-judul">
+              </div>
+              <div class="form-group" style="display:flex;gap:10px">
+                <div style="flex:1">
+                  <label class="form-label">Kategori</label>
+                  <select class="form-select" id="art-cat">
+                    <option>Film Indonesia</option>
+                    <option>Film Hollywood</option>
+                    <option>Serial TV</option>
+                    <option>Anime</option>
+                    <option>Film Korea</option>
+                    <option>Tips & Panduan</option>
+                    <option>Perbandingan Platform</option>
+                  </select>
+                </div>
+                <div style="width:90px">
+                  <label class="form-label">Emoji</label>
+                  <input type="text" class="form-input" id="art-emoji" placeholder="📝" value="📝" style="text-align:center">
+                </div>
               </div>
               <div class="form-group">
                 <label class="form-label">Meta Description (SEO)</label>
@@ -302,13 +313,14 @@
             </div>
             <div>
               <div class="form-group">
-                <label class="form-label">Konten Artikel</label>
+                <label class="form-label">Konten Artikel (boleh pakai tag &lt;p&gt;)</label>
                 <textarea class="form-textarea" id="art-content" style="height:200px" placeholder="Tulis konten artikel di sini..."></textarea>
               </div>
               <div style="display:flex;gap:8px;margin-top:8px">
-                <button class="btn btn-red" onclick="generateArtikel()">🤖 Generate dengan AI</button>
-                <button class="btn btn-ghost" onclick="saveArtikel()">💾 Simpan Draft</button>
+                <button class="btn btn-red" id="btn-publish-artikel" onclick="publishArtikel()">🚀 Publish Artikel</button>
+                <button class="btn btn-ghost" onclick="showNewArtikelForm()">Batal</button>
               </div>
+              <div style="font-size:11px;color:var(--muted);margin-top:10px">Artikel akan langsung tersimpan ke Google Sheets dan tampil di FlixID dalam beberapa detik.</div>
             </div>
           </div>
         </div>
@@ -680,16 +692,88 @@ function showNewArtikelForm(){
   form.style.display = form.style.display === 'none' ? 'block' : 'none';
 }
 
-function generateArtikel(){
-  const title = document.getElementById('art-title').value;
-  if(!title){ showNotif('❌ Isi judul artikel dulu!', 'error'); return; }
-  showNotif('🤖 Fitur AI generate akan segera hadir!');
+function slugify(text){
+  return text.toString().toLowerCase().trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
-function saveArtikel(){
+function updateSlugPreview(){
   const title = document.getElementById('art-title').value;
-  if(!title){ showNotif('❌ Isi judul artikel dulu!', 'error'); return; }
-  showNotif('✅ Draft tersimpan: '+title);
+  const slugField = document.getElementById('art-slug');
+  // Hanya auto-fill kalau user belum mengetik manual di kolom slug
+  if(!slugField.dataset.manual){
+    slugField.value = slugify(title);
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const slugField = document.getElementById('art-slug');
+  if(slugField){
+    slugField.addEventListener('input', () => { slugField.dataset.manual = 'true'; });
+  }
+});
+
+function showFormMsg(msg, type){
+  const el = document.getElementById('artikel-form-msg');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.background = type === 'error' ? 'rgba(229,9,20,0.1)' : 'rgba(3,192,74,0.1)';
+  el.style.border = type === 'error' ? '1px solid rgba(229,9,20,0.3)' : '1px solid rgba(3,192,74,0.3)';
+  el.style.color = type === 'error' ? '#ff6b6b' : 'var(--green)';
+}
+
+const CMS_API_URL_ADMIN = 'https://script.google.com/macros/s/AKfycbxACMNupjqBd-bPgBb1xj6FVcI9OH8vnQn2xdeVobMRrsDcBt9Jx83ppw0pFKNJGknR2A/exec';
+
+async function publishArtikel(){
+  const title = document.getElementById('art-title').value.trim();
+  const slug = document.getElementById('art-slug').value.trim() || slugify(title);
+  const category = document.getElementById('art-cat').value;
+  const emoji = document.getElementById('art-emoji').value.trim() || '📝';
+  const meta_description = document.getElementById('art-desc').value.trim();
+  const keywords = document.getElementById('art-keywords').value.trim();
+  const content = document.getElementById('art-content').value.trim();
+
+  if(!title){ showFormMsg('❌ Judul artikel wajib diisi!', 'error'); return; }
+  if(!content){ showFormMsg('❌ Konten artikel wajib diisi!', 'error'); return; }
+
+  const btn = document.getElementById('btn-publish-artikel');
+  btn.disabled = true;
+  btn.textContent = '⏳ Mempublikasikan...';
+
+  try {
+    const res = await fetch(CMS_API_URL_ADMIN, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // hindari CORS preflight di Apps Script
+      body: JSON.stringify({
+        title, slug, category, emoji, meta_description, keywords,
+        content: `<p>${content.replace(/\n\n+/g,'</p><p>').replace(/\n/g,'<br>')}</p>`,
+        published: true,
+        date: new Date().toISOString()
+      })
+    });
+    const result = await res.json();
+
+    if(result.success){
+      showFormMsg('✅ Artikel berhasil dipublikasikan! Akan muncul di FlixID dalam beberapa detik.', 'success');
+      showNotif('✅ Artikel berhasil dipublikasikan!');
+      // Reset form
+      document.getElementById('art-title').value = '';
+      document.getElementById('art-slug').value = '';
+      document.getElementById('art-slug').dataset.manual = '';
+      document.getElementById('art-desc').value = '';
+      document.getElementById('art-keywords').value = '';
+      document.getElementById('art-content').value = '';
+    } else {
+      showFormMsg('❌ Gagal: ' + (result.error||'Terjadi kesalahan'), 'error');
+    }
+  } catch(e) {
+    console.error(e);
+    showFormMsg('❌ Gagal terhubung ke server. Cek koneksi internet.', 'error');
+  }
+
+  btn.disabled = false;
+  btn.textContent = '🚀 Publish Artikel';
 }
 
 async function loadTrendingAdmin(){
