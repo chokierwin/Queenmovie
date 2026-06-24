@@ -595,6 +595,14 @@
   </div>
 </div>
 
+<!-- ARTIKEL CMS — DINAMIS DARI GOOGLE SHEETS -->
+<div class="section" id="cms-artikel-section" style="display:none">
+  <div class="section-header">
+    <div class="section-title">🆕 Artikel <span>Terbaru</span></div>
+  </div>
+  <div id="cms-artikel-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px"></div>
+</div>
+
 <footer>
   <div class="footer-top">
     <div class="footer-brand">
@@ -930,7 +938,37 @@ function closeSearch(){ document.getElementById('search-overlay').remove('open')
     loadRow('toprated-row','/movie/top_rated?','movie');
     loadRow('tv-row','/tv/popular?','tv');
     loadRow('upcoming-row','/movie/upcoming?','movie');
+    loadCMSArtikel();
   }, 1200);
+
+  // ── ARTIKEL CMS DARI GOOGLE SHEETS (via Apps Script) ──
+  const CMS_API_URL = 'https://script.google.com/macros/s/AKfycbxACMNupjqBd-bPgBb1xj6FVcI9OH8vnQn2xdeVobMRrsDcBt9Jx83ppw0pFKNJGknR2A/exec';
+
+  async function loadCMSArtikel(){
+    const section = document.getElementById('cms-artikel-section');
+    const grid = document.getElementById('cms-artikel-grid');
+    if(!section || !grid) return;
+
+    try {
+      const res = await fetch(CMS_API_URL);
+      if(!res.ok) throw new Error('Gagal mengambil data CMS');
+      const articles = await res.json();
+
+      if(!Array.isArray(articles) || articles.length === 0) return;
+
+      grid.innerHTML = articles.map(a => `
+        <a href="artikel-cms.html?slug=${encodeURIComponent(a.slug||'')}" style="text-decoration:none;background:#1a1a1a;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px;display:block;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(229,9,20,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
+          <div style="font-size:26px;margin-bottom:8px">${a.emoji||'📝'}</div>
+          <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:5px">${a.title||'Tanpa Judul'}</div>
+          <div style="font-size:11px;color:#b3b3b3">${a.category||''}</div>
+        </a>`).join('');
+
+      section.style.display = 'block';
+    } catch(e) {
+      console.error('CMS Artikel error:', e);
+      // Diam-diam gagal — section tetap hidden, tidak mengganggu pengalaman pengguna
+    }
+  }
 </script>
 </body>
 </html>
