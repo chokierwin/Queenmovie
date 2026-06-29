@@ -625,7 +625,7 @@ function renderError(rowId, endpoint, type){
 function renderCard(item, type='movie'){
   const title=getTitle(item), year=getYear(item), rating=getRating(item);
   const poster=item.poster_path
-    ?`<img class="card-thumb" src="${IMG}w342${item.poster_path}" alt="${title}" loading="lazy">`
+    ?`<img class="card-thumb" src="${IMG}w342${item.poster_path}" alt="${title}" loading="lazy" decoding="async">`
     :`<div class="card-thumb-placeholder">🎬</div>`;
   return `<div class="card" onclick="openModal(${item.id},'${type}')" role="button">
     ${poster}<div class="card-rating">★ ${rating}</div>
@@ -781,7 +781,7 @@ async function openModal(id, type='movie', playTrailer=true){
     if(trailerKey){
       document.getElementById('modal-media').innerHTML=`<div class="trailer-wrap"><iframe src="https://www.youtube.com/embed/${trailerKey}?autoplay=0&rel=0" allowfullscreen></iframe></div>`;
     } else {
-      document.getElementById('modal-media').innerHTML=backdrop ?`<img src="${backdrop}" class="modal-backdrop">` :`<div class="modal-backdrop-placeholder">🎬</div>`;
+      document.getElementById('modal-media').innerHTML=backdrop ?`<img src="${backdrop}" class="modal-backdrop" loading="lazy" decoding="async">` :`<div class="modal-backdrop-placeholder">🎬</div>`;
     }
 
     document.getElementById('modal-title').textContent=title;
@@ -789,13 +789,35 @@ async function openModal(id, type='movie', playTrailer=true){
     document.getElementById('modal-genres').innerHTML=(m.genres||[]).slice(0,4).map(g=>`<span class="genre-tag">${g.name}</span>`).join('');
     document.getElementById('modal-desc').textContent=m.overview||'Tidak ada deskripsi.';
 
+    // ── SCHEMA MOVIE (JSON-LD) — bantu Google tampilkan rating bintang di hasil pencarian ──
+    document.getElementById('movie-schema')?.remove();
+    const movieSchema = document.createElement('script');
+    movieSchema.id = 'movie-schema';
+    movieSchema.type = 'application/ld+json';
+    movieSchema.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": type === 'tv' ? "TVSeries" : "Movie",
+      "name": title,
+      "image": m.poster_path ? `${IMG}w500${m.poster_path}` : undefined,
+      "description": m.overview || undefined,
+      "datePublished": m.release_date || m.first_air_date || undefined,
+      "genre": (m.genres||[]).map(g => g.name),
+      "aggregateRating": m.vote_average ? {
+        "@type": "AggregateRating",
+        "ratingValue": m.vote_average,
+        "bestRating": "10",
+        "ratingCount": m.vote_count || 1
+      } : undefined
+    });
+    document.head.appendChild(movieSchema);
+
     const region=providers['ID']||providers['US']||null;
     let provHtml=`<div class="watch-full-title">Opsi Lisensi Resmi:</div>`;
     if(region && region.flatrate){
       provHtml+=`<div class="providers-list">`;
       region.flatrate.forEach(p=>{
         const link=providerLinks[p.provider_name]||'#';
-        provHtml+=`<a class="provider-btn" href="${link}" target="_blank"><img class="provider-logo" src="${IMG}w45${p.logo_path}"><div><span>${p.provider_name}</span></div></a>`;
+        provHtml+=`<a class="provider-btn" href="${link}" target="_blank"><img class="provider-logo" src="${IMG}w45${p.logo_path}" loading="lazy" decoding="async"><div><span>${p.provider_name}</span></div></a>`;
       });
       provHtml+=`</div>`;
     } else provHtml+=`<p class="no-providers">Belum tersedia lisensi resmi digital.</p>`;
