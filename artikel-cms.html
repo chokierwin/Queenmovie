@@ -2,6 +2,10 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" type="image/png" sizes="32x32" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title id="page-title">Memuat Artikel... — FlixID</title>
   <meta id="page-desc" name="description" content="Artikel FlixID">
@@ -83,11 +87,53 @@
       const emoji = data.emoji || '📝';
       const content = data.content || '<p>Konten belum tersedia.</p>';
       const date = data.date ? new Date(data.date).toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'}) : '';
+      const articleUrl = `https://chokierwin.github.io/Queenmovie/artikel-cms.html?slug=${encodeURIComponent(slug)}`;
 
       document.getElementById('page-title').textContent = title + ' — FlixID';
       document.getElementById('page-desc').setAttribute('content', desc);
 
+      // Canonical URL
+      const canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      canonical.href = articleUrl;
+      document.head.appendChild(canonical);
+
+      // Breadcrumb Schema (JSON-LD) — bantu Google tampilkan jalur navigasi di hasil pencarian
+      const breadcrumbSchema = document.createElement('script');
+      breadcrumbSchema.type = 'application/ld+json';
+      breadcrumbSchema.textContent = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "https://chokierwin.github.io/Queenmovie/" },
+          { "@type": "ListItem", "position": 2, "name": category, "item": `https://chokierwin.github.io/Queenmovie/#${category.toLowerCase().replace(/\s+/g,'-')}` },
+          { "@type": "ListItem", "position": 3, "name": title, "item": articleUrl }
+        ]
+      });
+      document.head.appendChild(breadcrumbSchema);
+
+      // Article Schema — membantu Google memahami ini adalah artikel
+      const articleSchema = document.createElement('script');
+      articleSchema.type = 'application/ld+json';
+      articleSchema.textContent = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": title,
+        "description": desc,
+        "datePublished": data.date || new Date().toISOString(),
+        "author": { "@type": "Organization", "name": "FlixID" },
+        "publisher": { "@type": "Organization", "name": "FlixID" }
+      });
+      document.head.appendChild(articleSchema);
+
       container.innerHTML = `
+        <nav style="max-width:800px;margin:16px auto 0;padding:0 24px;font-size:12px;color:var(--muted)">
+          <a href="index.html" style="color:var(--muted);text-decoration:none">Beranda</a>
+          <span style="margin:0 6px">/</span>
+          <span style="color:var(--muted)">${category}</span>
+          <span style="margin:0 6px">/</span>
+          <span style="color:#fff">${title}</span>
+        </nav>
         <div class="hero-article">
           <div class="article-tag">${emoji} ${category}</div>
           <h1>${title}</h1>
@@ -101,10 +147,46 @@
             <p>Cari film, tonton trailer, dan temukan di platform streaming mana tersedia — gratis!</p>
             <a href="index.html" class="btn">🎬 Jelajahi FlixID</a>
           </div>
+          <div id="related-articles"></div>
         </div>`;
+
+      // ── ARTIKEL TERKAIT — Internal Linking otomatis berdasarkan kategori ──
+      loadRelatedArticles(category, slug);
+
     } catch(e) {
       console.error(e);
       container.innerHTML = '<div class="loading-state">❌ Gagal memuat artikel. Coba lagi nanti.<br><a href="index.html" style="color:var(--red)">Kembali ke Beranda</a></div>';
+    }
+  }
+
+  async function loadRelatedArticles(category, currentSlug){
+    const target = document.getElementById('related-articles');
+    if(!target) return;
+
+    try {
+      const res = await fetch(CMS_API_URL);
+      const all = await res.json();
+      if(!Array.isArray(all)) return;
+
+      const related = all
+        .filter(a => a.category === category && a.slug !== currentSlug)
+        .slice(0, 4);
+
+      if(related.length === 0) return;
+
+      target.innerHTML = `
+        <div style="margin-top:40px;padding-top:32px;border-top:1px solid rgba(255,255,255,0.08)">
+          <h3 style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:1px;margin-bottom:16px">Artikel Terkait <span style="color:var(--red)">${category}</span></h3>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px">
+            ${related.map(a => `
+              <a href="artikel-cms.html?slug=${encodeURIComponent(a.slug)}" style="text-decoration:none;background:#1a1a1a;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px;display:block;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(229,9,20,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
+                <div style="font-size:22px;margin-bottom:6px">${a.emoji||'📝'}</div>
+                <div style="font-size:13px;font-weight:600;color:#fff">${a.title}</div>
+              </a>`).join('')}
+          </div>
+        </div>`;
+    } catch(e) {
+      console.error('Related articles error:', e);
     }
   }
 
